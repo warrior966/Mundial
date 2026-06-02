@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porra Mundial 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .animate-spin-slow { animation: spin 8s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-900 text-white font-sans min-h-screen flex flex-col">
+
+    <div id="winner-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-gradient-to-r from-yellow-500 to-amber-600 p-8 rounded-2xl shadow-2xl text-center max-w-md border-4 border-yellow-300 animate-bounce">
+            <i class="fa-solid fa-trophy text-6xl text-yellow-200 mb-4"></i>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">¡ENHORABUENA!</h2>
+            <p class="text-xl text-slate-900 font-medium mb-6">Has demostrado ser el rey de las porras. ¡Eres el ganador oficial del Mundial 2026!</p>
+            <button onclick="closeWinnerModal()" class="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-800 transition">Cerrar</button>
+        </div>
+    </div>
+
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-soccer-ball text-emerald-400 text-2xl animate-spin-slow"></i>
+                <span class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">PORRA MUNDIAL 2026</span>
+            </div>
+            <nav id="main-nav" class="hidden flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700">
+                <button onclick="switchTab('inicio')" id="btn-inicio" class="px-4 py-2 rounded-lg font-medium text-sm transition">Inicio</button>
+                <button onclick="switchTab('apostar')" id="btn-apostar" class="px-4 py-2 rounded-lg font-medium text-sm transition">Apostar</button>
+                <button onclick="switchTab('mis-apuestas')" id="btn-mis-apuestas" class="px-4 py-2 rounded-lg font-medium text-sm transition">Mis Apuestas</button>
+                <button onclick="switchTab('clasificacion')" id="btn-clasificacion" class="px-4 py-2 rounded-lg font-medium text-sm transition">Clasificación</button>
+                <button onclick="switchTab('admin')" id="btn-admin" class="hidden px-4 py-2 rounded-lg font-medium text-sm bg-red-900/50 text-red-300 border border-red-700 transition">Admin</button>
+            </nav>
+            <div id="auth-status" class="flex items-center gap-3">
+                </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6">
+        
+        <section id="tab-auth" class="max-w-md mx-auto my-12 bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-xl">
+            <div class="flex justify-center gap-4 mb-8 border-b border-slate-700 pb-4">
+                <button id="toggle-login" onclick="toggleAuthMode(true)" class="text-xl font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-2">Ingresar</button>
+                <button id="toggle-register" onclick="toggleAuthMode(false)" class="text-xl font-bold text-slate-400 pb-2 px-2">Registrarse</button>
+            </div>
+            
+            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+                <div id="field-nickname" class="hidden">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Apodo (Nickname)</label>
+                    <input type="text" id="auth-nickname" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
+                    <input type="email" id="auth-email" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña</label>
+                    <input type="password" id="auth-password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                
+                <div class="bg-amber-950/40 border border-amber-700/60 p-3 rounded-xl flex gap-3 text-amber-300 text-xs">
+                    <i class="fa-solid fa-triangle-exclamation text-base mt-0.5 flex-shrink-0"></i>
+                    <p><strong>Aviso importante:</strong> Por motivos de diseño de seguridad de este sistema, la contraseña <strong>no se puede ni cambiar ni recuperar</strong> bajo ningún término tras crear la cuenta.</p>
+                </div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-900 font-bold py-3 rounded-xl hover:opacity-90 transition mt-2">Entrar</button>
+            </form>
+        </section>
+
+        <section id="tab-inicio" class="hidden space-y-6">
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-2xl border border-slate-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <h1 class="text-4xl font-black mb-2">¡Bienvenido a la Porra!</h1>
+                    <p class="text-slate-300 mb-6">Compite con tus amigos prediciendo los resultados reales del Mundial 2026 en Estados Unidos, México y Canadá.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-slate-900/80 px-4 py-3 rounded-xl border border-slate-700/50">
+                            <span class="block text-xs text-slate-400 uppercase">Tu puntuación</span>
+                            <span id="user-display-points" class="text-2xl font-black text-emerald-400">0 pts</span>
+                        </div>
+                        <div class="bg-slate-900/80 px-4 py-3 rounded-xl border border-slate-700/50">
+                            <span class="block text-xs text-slate-400 uppercase">Estado de cuenta</span>
+                            <span id="user-display-status" class="text-2xl font-black text-cyan-400">Activo</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute right-0 bottom-0 top-0 opacity-10 flex items-center justify-center pr-12 pointer-events-none">
+                    <i class="fa-solid fa-trophy text-[12rem]"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-emerald-500/10 text-emerald-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-bullseye"></i></div>
+                    <div><h3 class="font-bold text-xs">Resultado Exacto</h3><p class="text-sm font-black text-emerald-400">+10 Pts</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-cyan-500/10 text-cyan-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-gavel"></i></div>
+                    <div><h3 class="font-bold text-xs">Ganador / Empate</h3><p class="text-sm font-black text-cyan-400">+5 Pts</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-purple-500/10 text-purple-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-list-ol"></i></div>
+                    <div><h3 class="font-bold text-xs">Pleno Grupo (4/4)</h3><p class="text-sm font-black text-purple-400">+20 Pts</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-amber-500/10 text-amber-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-circle-nodes"></i></div>
+                    <div><h3 class="font-bold text-xs">Aciertos Parciales</h3><p class="text-xs text-slate-400">3/4=15p | 2/4=10p | 1/4=5p</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-red-500/10 text-red-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-heart-crack"></i></div>
+                    <div><h3 class="font-bold text-xs">No Apostar Partido</h3><p class="text-sm font-black text-red-400">-2 Pts</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-apostar" class="hidden space-y-6">
+            <div class="flex flex-wrap gap-2 overflow-x-auto pb-2 border-b border-slate-700" id="group-tabs-container">
+                </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-emerald-400">
+                        <i class="fa-solid fa-calendar-days"></i> Partidos del Grupo
+                    </h2>
+                    <div id="matches-container" class="space-y-3">
+                        </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                        <h2 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-sort"></i> Clasificación del Grupo
+                        </h2>
+                        <p class="text-xs text-slate-400">Determina qué selecciones quedarán en cada posición (1º al 4º)</p>
+                        <div id="group-order-container" class="space-y-2">
+                            </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                        <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-crown"></i> Predicciones del Torneo
+                        </h2>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Campeón del Mundo 2026</label>
+                            <input type="text" id="bet-champion" placeholder="Ej. Argentina" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Máximo Goleador (Bota de Oro)</label>
+                            <input type="text" id="bet-top-scorer" placeholder="Ej. Mbappé" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+
+                    <button onclick="saveAllBets()" class="w-full bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl hover:bg-emerald-400 transition shadow-lg shadow-emerald-950/20">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Guardar Todo el Grupo Actual
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-mis-apuestas" class="hidden space-y-6">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-2xl font-black mb-4 text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check"></i> Resumen de Mis Apuestas Guardadas
+                </h2>
+                <div id="my-bets-summary" class="overflow-x-auto">
+                    </div>
+            </div>
+        </section>
+
+        <section id="tab-clasificacion" class="hidden space-y-6">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-2xl font-black mb-4 text-cyan-400 flex items-center gap-2">
+                    <i class="fa-solid fa-ranking-star"></i> Clasificación de Usuarios
+                </h2>
+                <div class="overflow-hidden rounded-xl border border-slate-700">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-700">
+                                <th class="p-4 w-16 text-center">Pos</th>
+                                <th class="p-4">Usuario</th>
+                                <th class="p-4 text-center">Puntos Totales</th>
+                                <th class="p-4 text-right">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-tbody" class="divide-y divide-slate-700/50">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-admin" class="hidden space-y-6">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-red-500/30">
+                <h2 class="text-2xl font-black text-red-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-toolbox"></i> Panel de Administrador
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-4">
+                        <h3 class="font-bold text-sm uppercase text-slate-400">Actualizar Partido Real</h3>
+                        <div class="grid grid-cols-3 gap-2 items-center">
+                            <select id="admin-match-select" class="col-span-3 bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></select>
+                            <input type="number" id="admin-score-home" placeholder="Goles Loc." class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-sm text-white">
+                            <span class="text-center font-bold">vs</span>
+                            <input type="number" id="admin-score-away" placeholder="Goles Vis." class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-sm text-white">
+                        </div>
+                        <button onclick="adminUpdateMatch()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg text-sm transition">
+                            Publicar Resultado Real y Forzar Recálculo
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-4">
+                        <h3 class="font-bold text-sm uppercase text-slate-400">Dar/Quitar Puntos y Descalificaciones</h3>
+                        <div>
+                            <select id="admin-user-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white mb-2"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="adminAlterPoints(5)" class="bg-emerald-600/20 text-emerald-400 border border-emerald-700 py-2 rounded-lg text-xs font-bold">+5 Pts</button>
+                            <button onclick="adminAlterPoints(-5)" class="bg-amber-600/20 text-amber-400 border border-amber-700 py-2 rounded-lg text-xs font-bold">-5 Pts</button>
+                        </div>
+                        <button onclick="adminToggleDisqualify()" class="w-full bg-rose-900/40 text-rose-300 border border-rose-700 py-2 rounded-lg text-xs font-bold hover:bg-rose-900/60 transition">
+                            Descalificar / Readmitir Usuario
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-800 mt-auto py-4 text-center text-xs text-slate-500">
+        &copy; 2026 Porra Mundial. Desarrollado e integrado con Firebase & GitHub Pages.
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // TUS CREDENCIALES REALES DE FIREBASE PROPORCIONADAS
+        const firebaseConfig = {
+            apiKey: "AIzaSyAL1kyOtdo7M9sJSuZHi2dM_CxUEARSlDI",
+            authDomain: "mundial-eeb29.firebaseapp.com",
+            projectId: "mundial-eeb29",
+            storageBucket: "mundial-eeb29.firebasestorage.app",
+            messagingSenderId: "406509376337",
+            appId: "1:406509376337:web:acd37572d1231e80f77970"
+        };
+
+        // Inicializaciones de Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // CAMBIA ESTE CORREO POR TU EMAIL REAL DE ADMINISTRADOR
+        const ADMIN_EMAIL = "alvaro.guerreromaldonado@alumno.fomento.edu"; 
+
+        // Variables de estado interno
+        let currentUser = null;
+        let userData = null;
+        let activeTab = 'inicio';
+        let currentGroupFilter = 'A';
+        let allUsers = [];
+
+        // Fixture Real Configurado para el Formato Mundial 2026 de 48 Selecciones
+        const worldCupData = {
+            groups: {
+                A: ["México", "Estados Unidos", "Canadá", "Fiyi"],
+                B: ["Brasil", "España", "Marruecos", "Japón"],
+                C: ["Argentina", "Francia", "Inglaterra", "Corea del Sur"],
+                D: ["Alemania", "Países Bajos", "Uruguay", "Egipto"],
+                E: ["Colombia", "Portugal", "Bélgica", "Catar"],
+                F: ["Italia", "Croacia", "Ecuador", "Túnez"],
+                G: ["Senegal", "Irán", "Australia", "Haití"],
+                H: ["Dinamarca", "Suiza", "Arabia Saudí", "Panamá"],
+                I: ["Ucrania", "Argelia", "Perú", "Nueva Zelanda"],
+                J: ["Chile", "Cabo Verde", "Irak", "Austria"],
+                K: ["Suecia", "Ghana", "Uzbekistán", "Jamaica"],
+                L: ["Costa de Marfil", "Honduras", "Turquía", "Omán"]
+            },
+            matches: [
+                // Grupo A - Inaugurales Reales Junio 2026
+                { id: "m1", group: "A", home: "México", away: "Fiyi", date: "11-Jun" },
+                { id: "m2", group: "A", home: "Estados Unidos", away: "Canadá", date: "12-Jun" },
+                { id: "m21", group: "A", home: "México", away: "Estados Unidos", date: "17-Jun" },
+                { id: "m22", group: "A", home: "Canadá", away: "Fiyi", date: "18-Jun" },
+                // Grupo B
+                { id: "m3", group: "B", home: "Brasil", away: "Japón", date: "12-Jun" },
+                { id: "m4", group: "B", home: "España", away: "Marruecos", date: "13-Jun" },
+                { id: "m23", group: "B", home: "España", away: "Brasil", date: "18-Jun" },
+                // Grupo C
+                { id: "m5", group: "C", home: "Argentina", away: "Corea del Sur", date: "13-Jun" },
+                { id: "m6", group: "C", home: "Francia", away: "Inglaterra", date: "14-Jun" }
+            ]
+        };
+
+        // Estado inicial de Resultados Maestro
+        let globalResults = {
+            matches: {},      
+            groupsOrder: {},  
+            champion: "",
+            topScorer: ""
+        };
+
+        // --- ENRUTADOR DE PESTAÑAS (TABS) ---
+        window.switchTab = function(tabId) {
+            if(!currentUser && tabId !== 'auth') return;
+            activeTab = tabId;
+            
+            ['tab-auth', 'tab-inicio', 'tab-apostar', 'tab-mis-apuestas', 'tab-clasificacion', 'tab-admin'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('#main-nav button').forEach(btn => {
+                btn.classList.remove('bg-emerald-500', 'text-slate-950');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-emerald-500', 'text-slate-950');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            if(tabId === 'apostar' || tabId === 'mis-apuestas') renderApostarTab();
+            if(tabId === 'clasificacion') fetchLeaderboard();
+        };
+
+        window.toggleAuthMode = function(isLogin) {
+            const nickField = document.getElementById('field-nickname');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const toggleLogin = document.getElementById('toggle-login');
+            const toggleRegister = document.getElementById('toggle-register');
+            
+            if(isLogin) {
+                nickField.classList.add('hidden');
+                submitBtn.innerText = "Entrar";
+                toggleLogin.className = "text-xl font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-2";
+                toggleRegister.className = "text-xl font-bold text-slate-400 pb-2 px-2";
+            } else {
+                nickField.classList.remove('hidden');
+                submitBtn.innerText = "Crear Cuenta";
+                toggleRegister.className = "text-xl font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-2";
+                toggleLogin.className = "text-xl font-bold text-slate-400 pb-2 px-2";
+            }
+        };
+
+        // --- SISTEMA AUTENTICACIÓN ---
+        window.handleAuth = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const nickname = document.getElementById('auth-nickname').value;
+            const isLogin = document.getElementById('field-nickname').classList.contains('hidden');
+
+            try {
+                if(isLogin) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(doc(db, "users", userCredential.user.uid), {
+                        nickname: nickname || email.split('@')[0],
+                        email: email,
+                        points: 0,
+                        isDisqualified: false
+                    });
+                }
+            } catch (error) {
+                alert("Error en proceso de autenticación: " + error.message);
+            }
+        };
+
+        window.logout = function() {
+            signOut(auth).then(() => { location.reload(); });
+        };
+
+        // --- REVISOR DE SESIÓN ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('main-nav').classList.remove('hidden');
+                
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if(userDoc.exists()) {
+                    userData = userDoc.data();
+                    document.getElementById('user-display-points').innerText = `${userData.points || 0} pts`;
+                    document.getElementById('user-display-status').innerText = userData.isDisqualified ? 'Descalificado' : 'Activo';
+                    if(userData.isDisqualified) document.getElementById('user-display-status').className = "text-2xl font-black text-red-500";
+                }
+
+                document.getElementById('auth-status').innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-slate-300">${userData?.nickname || user.email}</span>
+                        <button onclick="logout()" class="text-slate-400 hover:text-red-400 text-sm p-1"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                `;
+
+                if(user.email === ADMIN_EMAIL) {
+                    document.getElementById('btn-admin').classList.remove('hidden');
+                    initAdminPanel();
+                }
+
+                onSnapshot(doc(db, "results", "global"), (docSnap) => {
+                    if(docSnap.exists()) {
+                        globalResults = docSnap.data();
+                        evaluateAndSyncPoints();
+                    }
+                });
+
+                switchTab('inicio');
+            } else {
+                currentUser = null;
+                document.getElementById('main-nav').classList.add('hidden');
+                document.getElementById('auth-status').innerHTML = `<span class="text-xs text-slate-500">No logueado</span>`;
+                switchTab('auth');
+            }
+        });
+
+        // --- SISTEMA DE RENDERIZADO DE PARTIDOS Y APUESTAS ---
+        function buildGroupTabs() {
+            const container = document.getElementById('group-tabs-container');
+            container.innerHTML = '';
+            Object.keys(worldCupData.groups).forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = `px-3 py-1.5 rounded-lg text-xs font-bold transition flex-shrink-0 ${currentGroupFilter === g ? 'bg-cyan-500 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
+                btn.innerText = `Grupo ${g}`;
+                btn.onclick = () => {
+                    currentGroupFilter = g;
+                    buildGroupTabs();
+                    renderApostarTab();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        async function renderApostarTab() {
+            buildGroupTabs();
+            const matchesCont = document.getElementById('matches-container');
+            const orderCont = document.getElementById('group-order-container');
+            matchesCont.innerHTML = '';
+            orderCont.innerHTML = '';
+
+            const betSnap = await getDoc(doc(db, "bets", currentUser.uid));
+            const activeUserBets = betSnap.exists() ? betSnap.data() : { matchBets: {}, groupsOrder: {}, champion: "", topScorer: "" };
+
+            if(activeUserBets.champion) document.getElementById('bet-champion').value = activeUserBets.champion;
+            if(activeUserBets.topScorer) document.getElementById('bet-top-scorer').value = activeUserBets.topScorer;
+
+            const groupMatches = worldCupData.matches.filter(m => m.group === currentGroupFilter);
+            groupMatches.forEach(m => {
+                const savedBet = activeUserBets.matchBets?.[m.id] || { home: "", away: "" };
+                const matchResult = globalResults.matches?.[m.id];
+                const isFinished = matchResult?.finished;
+
+                const card = document.createElement('div');
+                card.className = `bg-slate-800 p-4 rounded-xl border ${isFinished ? 'border-slate-700 opacity-60' : 'border-slate-700'} flex flex-wrap items-center justify-between gap-4`;
+                card.innerHTML = `
+                    <div class="text-xs font-semibold text-slate-400 w-12">${m.date}</div>
+                    <div class="flex items-center gap-3 flex-grow justify-center">
+                        <span class="font-bold text-sm text-right w-24 sm:w-32">${m.home}</span>
+                        <input type="number" value="${savedBet.home}" id="bet-home-${m.id}" ${isFinished ? 'disabled' : ''} class="w-12 bg-slate-900 border border-slate-600 rounded-lg text-center py-1 font-bold text-sm focus:outline-none focus:border-emerald-500 text-white">
+                        <span class="text-slate-500 text-xs">vs</span>
+                        <input type="number" value="${savedBet.away}" id="bet-away-${m.id}" ${isFinished ? 'disabled' : ''} class="w-12 bg-slate-900 border border-slate-600 rounded-lg text-center py-1 font-bold text-sm focus:outline-none focus:border-emerald-500 text-white">
+                        <span class="font-bold text-sm text-left w-24 sm:w-32">${m.away}</span>
+                    </div>
+                    <div class="text-right text-xs">
+                        ${isFinished ? `<span class="bg-slate-900 px-2 py-1 rounded text-amber-400 font-mono text-[11px]">Real: ${matchResult.homeScore}-${matchResult.awayScore}</span>` : '<span class="text-emerald-500 font-medium text-[11px]"><i class="fa-solid fa-lock-open"></i> Abierto</span>'}
+                    </div>
+                `;
+                matchesCont.appendChild(card);
+            });
+
+            const groupTeams = worldCupData.groups[currentGroupFilter];
+            const savedOrder = activeUserBets.groupsOrder?.[currentGroupFilter] || ["", "", "", ""];
+            
+            for (let i = 0; i < 4; i++) {
+                const row = document.createElement('div');
+                row.className = "flex items-center gap-2";
+                let optionsHtml = `<option value="">-- Seleccionar Selección --</option>`;
+                groupTeams.forEach(team => {
+                    optionsHtml += `<option value="${team}" ${savedOrder[i] === team ? 'selected' : ''}>${team}</option>`;
+                });
+                row.innerHTML = `
+                    <span class="w-8 text-xs font-bold text-slate-500">${i+1}º</span>
+                    <select id="bet-order-${currentGroupFilter}-${i}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+                        ${optionsHtml}
+                    </select>
+                `;
+                orderCont.appendChild(row);
+            }
+
+            if(activeTab === 'mis-apuestas') {
+                renderSummaryTable(activeUserBets);
+            }
+        }
+
+        // --- ACCIÓN: GUARDAR LAS APUESTAS EN ENTORNO CLOUD ---
+        window.saveAllBets = async function() {
+            if(userData?.isDisqualified) {
+                alert("Cuenta penalizada/descalificada. No se permite actualizar apuestas.");
+                return;
+            }
+
+            const betRef = doc(db, "bets", currentUser.uid);
+            const betSnap = await getDoc(betRef);
+            let currentData = betSnap.exists() ? betSnap.data() : { matchBets: {}, groupsOrder: {}, champion: "", topScorer: "" };
+
+            const groupMatches = worldCupData.matches.filter(m => m.group === currentGroupFilter);
+            groupMatches.forEach(m => {
+                const homeVal = document.getElementById(`bet-home-${m.id}`).value;
+                const awayVal = document.getElementById(`bet-away-${m.id}`).value;
+                
+                if(!globalResults.matches?.[m.id]?.finished) {
+                    if(homeVal !== "" && awayVal !== "") {
+                        currentData.matchBets[m.id] = { home: parseInt(homeVal), away: parseInt(awayVal) };
+                    }
+                }
+            });
+
+            if(!currentData.groupsOrder) currentData.groupsOrder = {};
+            currentData.groupsOrder[currentGroupFilter] = [
+                document.getElementById(`bet-order-${currentGroupFilter}-0`).value,
+                document.getElementById(`bet-order-${currentGroupFilter}-1`).value,
+                document.getElementById(`bet-order-${currentGroupFilter}-2`).value,
+                document.getElementById(`bet-order-${currentGroupFilter}-3`).value
+            ];
+
+            currentData.champion = document.getElementById('bet-champion').value;
+            currentData.topScorer = document.getElementById('bet-top-scorer').value;
+
+            await setDoc(betRef, currentData);
+            alert("¡Estructura de apuestas para el Grupo " + currentGroupFilter + " almacenada!");
+            evaluateAndSyncPoints(); 
+        };
+
+        function renderSummaryTable(bets) {
+            const summaryCont = document.getElementById('my-bets-summary');
+            let html = `<div class="space-y-2 text-sm">`;
+            html += `<p class="text-amber-400 font-bold">Campeón del mundo elegido: <span class="text-white">${bets.champion || 'Sin definir'}</span></p>`;
+            html += `<p class="text-amber-400 font-bold mb-4">Bota de Oro elegida: <span class="text-white">${bets.topScorer || 'Sin definir'}</span></p>`;
+            html += `<h4 class="font-bold border-b border-slate-700 pb-1 text-slate-400 uppercase text-xs">Registro total por partidos</h4>`;
+            
+            worldCupData.matches.forEach(m => {
+                const b = bets.matchBets?.[m.id];
+                html += `<div class="flex justify-between py-1 border-b border-slate-800 text-xs">
+                    <span>[Grupo ${m.group}] ${m.home} vs ${m.away}</span>
+                    <span class="font-mono text-emerald-400">${b ? b.home + ' - ' + b.away : 'No apostado (-2 pts penalización)'}</span>
+                </div>`;
+            });
+            html += `</div>`;
+            summaryCont.innerHTML = html;
+        }
+
+        // --- CÁLCULO DE PUNTOS AUTOMÁTICO (MOTOR DINÁMICO) ---
+        async function evaluateAndSyncPoints() {
+            if(!currentUser) return;
+            
+            const betSnap = await getDoc(doc(db, "bets", currentUser.uid));
+            if(!betSnap.exists()) return;
+            const userBets = betSnap.data();
+            
+            let totalPoints = 0;
+
+            // 1. Regla de partidos y penalizaciones por no apostar (-2 pts)
+            worldCupData.matches.forEach(m => {
+                const bet = userBets.matchBets?.[m.id];
+                const real = globalResults.matches?.[m.id];
+
+                if (!bet) {
+                    totalPoints -= 2; 
+                } else if (real && real.finished) {
+                    const bHome = bet.home;
+                    const bAway = bet.away;
+                    const rHome = real.homeScore;
+                    const rAway = real.awayScore;
+
+                    const userSign = bHome > bAway ? '1' : (bHome < bAway ? '2' : 'X');
+                    const realSign = rHome > rAway ? '1' : (rHome < rAway ? '2' : 'X');
+
+                    if (bHome === rHome && bAway === rAway) {
+                        totalPoints += 10; // Resultado exacto
+                    } else if (userSign === realSign) {
+                        totalPoints += 5;  // Victoria/Empate
+                    }
+                }
+            });
+
+            // 2. Regla de Puntos por Orden de Grupo (Escala exacta solicitada)
+            if(userBets.groupsOrder) {
+                Object.keys(userBets.groupsOrder).forEach(gId => {
+                    const userOrder = userBets.groupsOrder[gId]; 
+                    const realOrder = globalResults.groupsOrder?.[gId]; 
+
+                    if(realOrder && realOrder.length === 4) {
+                        let matchesInPosition = 0;
+                        for(let i=0; i<4; i++) {
+                            if(userOrder[i] && userOrder[i] === realOrder[i]) {
+                                matchesInPosition++;
+                            }
+                        }
+                        if(matchesInPosition === 4) totalPoints += 20;
+                        else if(matchesInPosition === 3) totalPoints += 15;
+                        else if(matchesInPosition === 2) totalPoints += 10;
+                        else if(matchesInPosition === 1) totalPoints += 5;
+                    }
+                });
+            }
+
+            // 3. Bonus Finales de Torneo
+            if(globalResults.champion && userBets.champion && globalResults.champion.toLowerCase().trim() === userBets.champion.toLowerCase().trim()) {
+                totalPoints += 30; 
+            }
+            if(globalResults.topScorer && userBets.topScorer && globalResults.topScorer.toLowerCase().trim() === userBets.topScorer.toLowerCase().trim()) {
+                totalPoints += 20; 
+            }
+
+            // Guardar datos en la ficha del usuario en Firestore si difieren
+            if(userData && !userData.isDisqualified && userData.points !== totalPoints) {
+                await updateDoc(doc(db, "users", currentUser.uid), { points: totalPoints });
+                document.getElementById('user-display-points').innerText = `${totalPoints} pts`;
+            }
+
+            checkIfWinnerAndNotify();
+        }
+
+        // --- RENDER CLASIFICACIÓN DE USUARIOS A MODO DE LISTA ---
+        async function fetchLeaderboard() {
+            const tbody = document.getElementById('leaderboard-tbody');
+            tbody.innerHTML = '';
+
+            const q = query(collection(db, "users"), orderBy("points", "desc"));
+            const querySnapshot = await getDocs(q);
+            allUsers = [];
+            
+            let index = 1;
+            querySnapshot.forEach((docSnap) => {
+                const u = docSnap.data();
+                u.id = docSnap.id;
+                allUsers.push(u);
+
+                const tr = document.createElement('tr');
+                tr.className = u.isDisqualified ? "bg-rose-950/20 opacity-40" : "hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="p-4 text-center font-mono font-bold text-slate-400">${index++}</td>
+                    <td class="p-4 font-bold text-slate-200">${u.nickname} ${u.email === ADMIN_EMAIL ? '<span class="text-xs text-red-400 bg-red-900/30 px-1 rounded ml-1">Admin</span>':''}</td>
+                    <td class="p-4 text-center font-black text-emerald-400">${u.points || 0}</td>
+                    <td class="p-4 text-right">
+                        <span class="text-xs px-2 py-0.5 rounded-full font-bold ${u.isDisqualified ? 'bg-rose-900/50 text-rose-300' : 'bg-emerald-900/50 text-emerald-300'}">
+                            ${u.isDisqualified ? 'Descalificado' : 'Activo'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- MENSAJE FLOTANTE PARA EL GANADOR EN EL FIN DEL MUNDIAL ---
+        function checkIfWinnerAndNotify() {
+            if(allUsers.length > 0 && allUsers[0].id === currentUser.uid && !userData.isDisqualified) {
+                if(globalResults.champion !== "" && globalResults.champion !== undefined) {
+                    document.getElementById('winner-modal').classList.remove('hidden');
+                }
+            }
+        }
+        window.closeWinnerModal = function() {
+            document.getElementById('winner-modal').classList.add('hidden');
+        };
+
+        // --- CONTROLADORES DE ROL DE ADMINISTRADOR ---
+        function initAdminPanel() {
+            const matchSelect = document.getElementById('admin-match-select');
+            matchSelect.innerHTML = '';
+            worldCupData.matches.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.id;
+                opt.innerText = `[Grupo ${m.group}] ${m.home} vs ${m.away}`;
+                matchSelect.appendChild(opt);
+            });
+            refreshAdminUsers();
+        }
+
+        async function refreshAdminUsers() {
+            const userSelect = document.getElementById('admin-user-select');
+            userSelect.innerHTML = '';
+            const querySnapshot = await getDocs(collection(db, "users"));
+            querySnapshot.forEach(docSnap => {
+                const u = docSnap.data();
+                const opt = document.createElement('option');
+                opt.value = docSnap.id;
+                opt.innerText = `${u.nickname} (${u.points} pts) - ${u.isDisqualified ? 'Descalificado' : 'Activo'}`;
+                userSelect.appendChild(opt);
+            });
+        }
+
+        window.adminUpdateMatch = async function() {
+            const matchId = document.getElementById('admin-match-select').value;
+            const hScore = document.getElementById('admin-score-home').value;
+            const aScore = document.getElementById('admin-score-away').value;
+
+            if(hScore === "" || aScore === "") return alert("Especifica los goles reales.");
+
+            if(!globalResults.matches) globalResults.matches = {};
+            globalResults.matches[matchId] = {
+                homeScore: parseInt(hScore),
+                awayScore: parseInt(aScore),
+                finished: true
+            };
+
+            await setDoc(doc(db, "results", "global"), globalResults, { merge: true });
+            alert("Resultado oficial publicado con éxito.");
+            initAdminPanel();
+        };
+
+        window.adminAlterPoints = async function(val) {
+            const uId = document.getElementById('admin-user-select').value;
+            const uDocRef = doc(db, "users", uId);
+            const snap = await getDoc(uDocRef);
+            if(snap.exists()) {
+                const currentP = snap.data().points || 0;
+                await updateDoc(uDocRef, { points: currentP + val });
+                alert(`Puntuación del usuario modificada.`);
+                refreshAdminUsers();
+            }
+        };
+
+        window.adminToggleDisqualify = async function() {
+            const uId = document.getElementById('admin-user-select').value;
+            const uDocRef = doc(db, "users", uId);
+            const snap = await getDoc(uDocRef);
+            if(snap.exists()) {
+                const currentState = snap.data().isDisqualified || false;
+                await updateDoc(uDocRef, { isDisqualified: !currentState });
+                alert(`El estado del usuario ha sido modificado.`);
+                refreshAdminUsers();
+            }
+        };
+    </script>
+</body>
+</html>
