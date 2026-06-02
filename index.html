@@ -319,7 +319,7 @@
                 { id: "mF1", group: "F", home: "Países Bajos", away: "Japón", date: "14-Jun" },
                 { id: "mF2", group: "F", home: "Suecia", away: "Túnez", date: "14-Jun" },
                 { id: "mF3", group: "F", home: "Países Bajos", away: "Suecia", date: "20-Jun" },
-                { id: "mF4", group: "F", home: "Túnez", away: "Japón", date: "20-Jun" },
+                { id: "mF4", group: "F", text: "Túnez", home: "Túnez", away: "Japón", date: "20-Jun" },
                 { id: "mF5", group: "F", home: "Túnez", away: "Países Bajos", date: "25-Jun" },
                 { id: "mF6", group: "F", home: "Japón", away: "Suecia", date: "25-Jun" },
                 // GRUPO G
@@ -701,9 +701,16 @@
 
         window.adminToggleDisqualify = async function() {
             const id = document.getElementById('admin-user-select').value;
-            const ref = doc(db, "users", id); const s = await getDoc(ref);
-            if(s.exists()) await updateDoc(ref, { isDisqualified: !s.data().isDisqualified });
-            refreshAdminUsers();
+            if(!id) return alert("Por favor, selecciona un usuario primero.");
+            
+            const ref = doc(db, "users", id); 
+            const s = await getDoc(ref);
+            if(s.exists()) {
+                // CAMBIO QUIRÚRGICO: Asegura la actualización remota antes de redibujar la UI local
+                await updateDoc(ref, { isDisqualified: !s.data().isDisqualified });
+                alert("Estado del usuario actualizado correctamente.");
+                await refreshAdminUsers();
+            }
         };
     </script>
 </body>
