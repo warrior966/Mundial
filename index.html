@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Porra Mundial 2026</title>
+    <!-- Tailwind CSS para diseño moderno y oscuro -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .animate-spin-slow { animation: spin 8s linear infinite; }
@@ -13,6 +15,7 @@
 </head>
 <body class="bg-slate-900 text-white font-sans min-h-screen flex flex-col">
 
+    <!-- Notificación Flotante de Ganador -->
     <div id="winner-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
         <div class="bg-gradient-to-r from-yellow-500 to-amber-600 p-8 rounded-2xl shadow-2xl text-center max-w-md border-4 border-yellow-300 animate-bounce">
             <i class="fa-solid fa-trophy text-6xl text-yellow-200 mb-4"></i>
@@ -22,6 +25,7 @@
         </div>
     </div>
 
+    <!-- NAVBAR -->
     <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-2">
@@ -36,12 +40,15 @@
                 <button onclick="switchTab('admin')" id="btn-admin" class="hidden px-4 py-2 rounded-lg font-medium text-sm bg-red-900/50 text-red-300 border border-red-700 transition">Admin</button>
             </nav>
             <div id="auth-status" class="flex items-center gap-3">
-                </div>
+                <!-- Estado de Auth dinámico -->
+            </div>
         </div>
     </header>
 
+    <!-- CONTENEDOR PRINCIPAL -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6">
         
+        <!-- PESTAÑA: LOGIN / REGISTRO -->
         <section id="tab-auth" class="max-w-md mx-auto my-12 bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-xl">
             <div class="flex justify-center gap-4 mb-8 border-b border-slate-700 pb-4">
                 <button id="toggle-login" onclick="toggleAuthMode(true)" class="text-xl font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-2">Ingresar</button>
@@ -71,6 +78,7 @@
             </form>
         </section>
 
+        <!-- PESTAÑA: INICIO -->
         <section id="tab-inicio" class="hidden space-y-6">
             <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-2xl border border-slate-700 relative overflow-hidden">
                 <div class="relative z-10 max-w-2xl">
@@ -92,6 +100,7 @@
                 </div>
             </div>
 
+            <!-- Reparto de Puntos -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
                     <div class="bg-emerald-500/10 text-emerald-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-bullseye"></i></div>
@@ -116,19 +125,24 @@
             </div>
         </section>
 
+        <!-- PESTAÑA: APOSTAR -->
         <section id="tab-apostar" class="hidden space-y-6">
             <div class="flex flex-wrap gap-2 overflow-x-auto pb-2 border-b border-slate-700" id="group-tabs-container">
-                </div>
+                <!-- Botones de la A a la L -->
+            </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Columna Partidos -->
                 <div class="lg:col-span-2 space-y-4">
                     <h2 class="text-xl font-bold flex items-center gap-2 text-emerald-400">
                         <i class="fa-solid fa-calendar-days"></i> Partidos del Grupo
                     </h2>
                     <div id="matches-container" class="space-y-3">
-                        </div>
+                        <!-- Inyectado por JS -->
+                    </div>
                 </div>
                 
+                <!-- Columna Clasificación y Finales -->
                 <div class="space-y-6">
                     <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
                         <h2 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
@@ -136,7 +150,8 @@
                         </h2>
                         <p class="text-xs text-slate-400">Determina qué selecciones quedarán en cada posición (1º al 4º)</p>
                         <div id="group-order-container" class="space-y-2">
-                            </div>
+                            <!-- Selectores de posición de grupo -->
+                        </div>
                     </div>
 
                     <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
@@ -160,16 +175,19 @@
             </div>
         </section>
 
+        <!-- PESTAÑA: MIS APUESTAS -->
         <section id="tab-mis-apuestas" class="hidden space-y-6">
             <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
                 <h2 class="text-2xl font-black mb-4 text-emerald-400 flex items-center gap-2">
                     <i class="fa-solid fa-clipboard-check"></i> Resumen de Mis Apuestas Guardadas
                 </h2>
                 <div id="my-bets-summary" class="overflow-x-auto">
-                    </div>
+                    <!-- Resumen inyectado por JS -->
+                </div>
             </div>
         </section>
 
+        <!-- PESTAÑA: CLASIFICACIÓN -->
         <section id="tab-clasificacion" class="hidden space-y-6">
             <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
                 <h2 class="text-2xl font-black mb-4 text-cyan-400 flex items-center gap-2">
@@ -186,12 +204,14 @@
                             </tr>
                         </thead>
                         <tbody id="leaderboard-tbody" class="divide-y divide-slate-700/50">
-                            </tbody>
+                            <!-- Lista ordenada de usuarios -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- PESTAÑA: ADMINISTRADOR -->
         <section id="tab-admin" class="hidden space-y-6">
             <div class="bg-slate-800 p-6 rounded-2xl border border-red-500/30">
                 <h2 class="text-2xl font-black text-red-400 mb-4 flex items-center gap-2">
@@ -199,6 +219,7 @@
                 </h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Introducir Resultados Reales -->
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-4">
                         <h3 class="font-bold text-sm uppercase text-slate-400">Actualizar Partido Real</h3>
                         <div class="grid grid-cols-3 gap-2 items-center">
@@ -212,6 +233,7 @@
                         </button>
                     </div>
 
+                    <!-- Gestión de Usuarios -->
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-4">
                         <h3 class="font-bold text-sm uppercase text-slate-400">Dar/Quitar Puntos y Descalificaciones</h3>
                         <div>
@@ -235,6 +257,7 @@
         &copy; 2026 Porra Mundial. Desarrollado e integrado con Firebase & GitHub Pages.
     </footer>
 
+    <!-- LÓGICA MÓDULO FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -263,107 +286,107 @@
         let currentGroupFilter = 'A';
         let allUsers = [];
 
-        // FIXTURE COMPLETO MUNDIAL 2026 (72 PARTIDOS)
+        // FIXTURE COMPLETO REAL MUNDIAL 2026 (72 PARTIDOS OFICIALES DE LA FIFA)
         const worldCupData = {
             groups: {
-                A: ["México", "Estados Unidos", "Canadá", "Fiyi"],
-                B: ["Brasil", "España", "Marruecos", "Japón"],
-                C: ["Argentina", "Francia", "Inglaterra", "Corea del Sur"],
-                D: ["Alemania", "Países Bajos", "Uruguay", "Egipto"],
-                E: ["Colombia", "Portugal", "Bélgica", "Catar"],
-                F: ["Italia", "Croacia", "Ecuador", "Túnez"],
-                G: ["Senegal", "Irán", "Australia", "Haití"],
-                H: ["Dinamarca", "Suiza", "Arabia Saudí", "Panamá"],
-                I: ["Ucrania", "Argelia", "Perú", "Nueva Zelanda"],
-                J: ["Chile", "Cabo Verde", "Irak", "Austria"],
-                K: ["Suecia", "Ghana", "Uzbekistán", "Jamaica"],
-                L: ["Costa de Marfil", "Honduras", "Turquía", "Omán"]
+                A: ["México", "Sudáfrica", "República de Corea", "República Checa"],
+                B: ["Canadá", "Bosnia y Herzegovina", "Catar", "Suiza"],
+                C: ["Brasil", "Marruecos", "Haití", "Escocia"],
+                D: ["Estados Unidos", "Paraguay", "Australia", "Turquía"],
+                E: ["Alemania", "Curazao", "Costa de Marfil", "Ecuador"],
+                F: ["Países Bajos", "Japón", "Suecia", "Túnez"],
+                G: ["Bélgica", "Egipto", "RI de Irán", "Nueva Zelanda"],
+                H: ["España", "Cabo Verde", "Arabia Saudí", "Uruguay"],
+                I: ["Francia", "Senegal", "Irak", "Noruega"],
+                J: ["Argentina", "Argelia", "Austria", "Jordania"],
+                K: ["Portugal", "RD Congo", "Uzbekistán", "Colombia"],
+                L: ["Inglaterra", "Croacia", "Ghana", "Panamá"]
             },
             matches: [
                 // GRUPO A
-                { id: "mA1", group: "A", home: "México", away: "Fiyi", date: "11-Jun" },
-                { id: "mA2", group: "A", home: "Estados Unidos", away: "Canadá", date: "12-Jun" },
-                { id: "mA3", group: "A", home: "México", away: "Estados Unidos", date: "17-Jun" },
-                { id: "mA4", group: "A", home: "Canadá", away: "Fiyi", date: "17-Jun" },
-                { id: "mA5", group: "A", home: "Canadá", away: "México", date: "24-Jun" },
-                { id: "mA6", group: "A", home: "Fiyi", away: "Estados Unidos", date: "24-Jun" },
+                { id: "mA1", group: "A", home: "México", away: "Sudáfrica", date: "11-Jun" },
+                { id: "mA2", group: "A", home: "República de Corea", away: "República Checa", date: "11-Jun" },
+                { id: "mA3", group: "A", home: "México", away: "República de Corea", date: "18-Jun" },
+                { id: "mA4", group: "A", home: "República Checa", away: "Sudáfrica", date: "18-Jun" },
+                { id: "mA5", group: "A", home: "República Checa", away: "México", date: "24-Jun" },
+                { id: "mA6", group: "A", home: "Sudáfrica", away: "República de Corea", date: "24-Jun" },
                 // GRUPO B
-                { id: "mB1", group: "B", home: "Brasil", away: "Japón", date: "12-Jun" },
-                { id: "mB2", group: "B", home: "España", away: "Marruecos", date: "13-Jun" },
-                { id: "mB3", group: "B", home: "España", away: "Brasil", date: "18-Jun" },
-                { id: "mB4", group: "B", home: "Japón", away: "Marruecos", date: "18-Jun" },
-                { id: "mB5", group: "B", home: "Japón", away: "España", date: "24-Jun" },
-                { id: "mB6", group: "B", home: "Marruecos", away: "Brasil", date: "24-Jun" },
+                { id: "mB1", group: "B", home: "Canadá", away: "Bosnia y Herzegovina", date: "12-Jun" },
+                { id: "mB2", group: "B", home: "Catar", away: "Suiza", date: "13-Jun" },
+                { id: "mB3", group: "B", home: "Canadá", away: "Catar", date: "18-Jun" },
+                { id: "mB4", group: "B", home: "Suiza", away: "Bosnia y Herzegovina", date: "18-Jun" },
+                { id: "mB5", group: "B", home: "Suiza", away: "Canadá", date: "24-Jun" },
+                { id: "mB6", group: "B", home: "Bosnia y Herzegovina", away: "Catar", date: "24-Jun" },
                 // GRUPO C
-                { id: "mC1", group: "C", home: "Argentina", away: "Corea del Sur", date: "13-Jun" },
-                { id: "mC2", group: "C", home: "Francia", away: "Inglaterra", date: "14-Jun" },
-                { id: "mC3", group: "C", home: "Francia", away: "Argentina", date: "19-Jun" },
-                { id: "mC4", group: "C", home: "Corea del Sur", away: "Inglaterra", date: "19-Jun" },
-                { id: "mC5", group: "C", home: "Corea del Sur", away: "Francia", date: "25-Jun" },
-                { id: "mC6", group: "C", home: "Inglaterra", away: "Argentina", date: "25-Jun" },
+                { id: "mC1", group: "C", home: "Brasil", away: "Marruecos", date: "13-Jun" },
+                { id: "mC2", group: "C", home: "Haití", away: "Escocia", date: "13-Jun" },
+                { id: "mC3", group: "C", home: "Brasil", away: "Haití", date: "19-Jun" },
+                { id: "mC4", group: "C", home: "Escocia", away: "Marruecos", date: "19-Jun" },
+                { id: "mC5", group: "C", home: "Escocia", away: "Brasil", date: "24-Jun" },
+                { id: "mC6", group: "C", home: "Marruecos", away: "Haití", date: "24-Jun" },
                 // GRUPO D
-                { id: "mD1", group: "D", home: "Alemania", away: "Egipto", date: "13-Jun" },
-                { id: "mD2", group: "D", home: "Países Bajos", away: "Uruguay", date: "14-Jun" },
-                { id: "mD3", group: "D", home: "Alemania", away: "Países Bajos", date: "19-Jun" },
-                { id: "mD4", group: "D", home: "Uruguay", away: "Egipto", date: "20-Jun" },
-                { id: "mD5", group: "D", home: "Uruguay", away: "Alemania", date: "25-Jun" },
-                { id: "mD6", group: "D", home: "Egipto", away: "Países Bajos", date: "25-Jun" },
+                { id: "mD1", group: "D", home: "Estados Unidos", away: "Paraguay", date: "12-Jun" },
+                { id: "mD2", group: "D", home: "Australia", away: "Turquía", date: "13-Jun" },
+                { id: "mD3", group: "D", home: "Estados Unidos", away: "Australia", date: "19-Jun" },
+                { id: "mD4", group: "D", home: "Turquía", away: "Paraguay", date: "19-Jun" },
+                { id: "mD5", group: "D", home: "Turquía", away: "Estados Unidos", date: "25-Jun" },
+                { id: "mD6", group: "D", home: "Paraguay", away: "Australia", date: "25-Jun" },
                 // GRUPO E
-                { id: "mE1", group: "E", home: "Colombia", away: "Catar", date: "14-Jun" },
-                { id: "mE2", group: "E", home: "Portugal", away: "Bélgica", date: "15-Jun" },
-                { id: "mE3", group: "E", home: "Colombia", away: "Portugal", date: "20-Jun" },
-                { id: "mE4", group: "E", home: "Bélgica", away: "Catar", date: "20-Jun" },
-                { id: "mE5", group: "E", home: "Bélgica", away: "Colombia", date: "26-Jun" },
-                { id: "mE6", group: "E", home: "Catar", away: "Portugal", date: "26-Jun" },
+                { id: "mE1", group: "E", home: "Alemania", away: "Curazao", date: "14-Jun" },
+                { id: "mE2", group: "E", home: "Costa de Marfil", away: "Ecuador", date: "14-Jun" },
+                { id: "mE3", group: "E", home: "Alemania", away: "Costa de Marfil", date: "20-Jun" },
+                { id: "mE4", group: "E", home: "Ecuador", away: "Curazao", date: "20-Jun" },
+                { id: "mE5", group: "E", home: "Ecuador", away: "Alemania", date: "25-Jun" },
+                { id: "mE6", group: "E", home: "Curazao", away: "Costa de Marfil", date: "25-Jun" },
                 // GRUPO F
-                { id: "mF1", group: "F", home: "Italia", away: "Túnez", date: "14-Jun" },
-                { id: "mF2", group: "F", home: "Croacia", away: "Ecuador", date: "15-Jun" },
-                { id: "mF3", group: "F", home: "Italia", away: "Croacia", date: "21-Jun" },
-                { id: "mF4", group: "F", home: "Ecuador", away: "Túnez", date: "21-Jun" },
-                { id: "mF5", group: "F", home: "Ecuador", away: "Italia", date: "26-Jun" },
-                { id: "mF6", group: "F", home: "Túnez", away: "Croacia", date: "26-Jun" },
+                { id: "mF1", group: "F", home: "Países Bajos", away: "Japón", date: "14-Jun" },
+                { id: "mF2", group: "F", home: "Suecia", away: "Túnez", date: "14-Jun" },
+                { id: "mF3", group: "F", home: "Países Bajos", away: "Suecia", date: "20-Jun" },
+                { id: "mF4", group: "F", home: "Túnez", away: "Japón", date: "20-Jun" },
+                { id: "mF5", group: "F", home: "Túnez", away: "Países Bajos", date: "25-Jun" },
+                { id: "mF6", group: "F", home: "Japón", away: "Suecia", date: "25-Jun" },
                 // GRUPO G
-                { id: "mG1", group: "G", home: "Senegal", away: "Haití", date: "15-Jun" },
-                { id: "mG2", group: "G", home: "Irán", away: "Australia", date: "16-Jun" },
-                { id: "mG3", group: "G", home: "Senegal", away: "Irán", date: "21-Jun" },
-                { id: "mG4", group: "G", home: "Australia", away: "Haití", date: "22-Jun" },
-                { id: "mG5", group: "G", home: "Australia", away: "Senegal", date: "27-Jun" },
-                { id: "mG6", group: "G", home: "Haití", away: "Irán", date: "27-Jun" },
+                { id: "mG1", group: "G", home: "Bélgica", away: "Egipto", date: "15-Jun" },
+                { id: "mG2", group: "G", home: "RI de Irán", away: "Nueva Zelanda", date: "15-Jun" },
+                { id: "mG3", group: "G", home: "Bélgica", away: "RI de Irán", date: "21-Jun" },
+                { id: "mG4", group: "G", home: "Nueva Zelanda", away: "Egipto", date: "21-Jun" },
+                { id: "mG5", group: "G", home: "Nueva Zelanda", away: "Bélgica", date: "26-Jun" },
+                { id: "mG6", group: "G", home: "Egipto", away: "RI de Irán", date: "26-Jun" },
                 // GRUPO H
-                { id: "mH1", group: "H", home: "Dinamarca", away: "Panamá", date: "15-Jun" },
-                { id: "mH2", group: "H", home: "Suiza", away: "Arabia Saudí", date: "16-Jun" },
-                { id: "mH3", group: "H", home: "Dinamarca", away: "Suiza", date: "22-Jun" },
-                { id: "mH4", group: "H", home: "Arabia Saudí", away: "Panamá", date: "22-Jun" },
-                { id: "mH5", group: "H", home: "Arabia Saudí", away: "Dinamarca", date: "27-Jun" },
-                { id: "mH6", group: "H", home: "Panamá", away: "Suiza", date: "27-Jun" },
+                { id: "mH1", group: "H", home: "España", away: "Cabo Verde", date: "15-Jun" },
+                { id: "mH2", group: "H", home: "Arabia Saudí", away: "Uruguay", date: "15-Jun" },
+                { id: "mH3", group: "H", home: "España", away: "Arabia Saudí", date: "21-Jun" },
+                { id: "mH4", group: "H", home: "Uruguay", away: "Cabo Verde", date: "22-Jun" },
+                { id: "mH5", group: "H", home: "Uruguay", away: "España", date: "26-Jun" },
+                { id: "mH6", group: "H", home: "Cabo Verde", away: "Arabia Saudí", date: "26-Jun" },
                 // GRUPO I
-                { id: "mI1", group: "I", home: "Ucrania", away: "Nueva Zelanda", date: "16-Jun" },
-                { id: "mI2", group: "I", home: "Argelia", away: "Perú", date: "17-Jun" },
-                { id: "mI3", group: "I", home: "Ucrania", away: "Argelia", date: "22-Jun" },
-                { id: "mI4", group: "I", home: "Perú", away: "Nueva Zelanda", date: "23-Jun" },
-                { id: "mI5", group: "I", home: "Perú", away: "Ucrania", date: "27-Jun" },
-                { id: "mI6", group: "I", home: "Nueva Zelanda", away: "Argelia", date: "27-Jun" },
+                { id: "mI1", group: "I", home: "Francia", away: "Senegal", date: "16-Jun" },
+                { id: "mI2", group: "I", home: "Irak", away: "Noruega", date: "16-Jun" },
+                { id: "mI3", group: "I", home: "Francia", away: "Irak", date: "22-Jun" },
+                { id: "mI4", group: "I", home: "Noruega", away: "Senegal", date: "22-Jun" },
+                { id: "mI5", group: "I", home: "Noruega", away: "Francia", date: "26-Jun" },
+                { id: "mI6", group: "I", home: "Senegal", away: "Irak", date: "26-Jun" },
                 // GRUPO J
-                { id: "mJ1", group: "J", home: "Chile", away: "Austria", date: "16-Jun" },
-                { id: "mJ2", group: "J", home: "Cabo Verde", away: "Irak", date: "17-Jun" },
-                { id: "mJ3", group: "J", home: "Chile", away: "Cabo Verde", date: "23-Jun" },
-                { id: "mJ4", group: "J", home: "Irak", away: "Austria", date: "23-Jun" },
-                { id: "mJ5", group: "J", home: "Irak", away: "Chile", date: "27-Jun" },
-                { id: "mJ6", group: "J", home: "Austria", away: "Cabo Verde", date: "27-Jun" },
+                { id: "mJ1", group: "J", home: "Argentina", away: "Argelia", date: "16-Jun" },
+                { id: "mJ2", group: "J", home: "Austria", away: "Jordania", date: "16-Jun" },
+                { id: "mJ3", group: "J", home: "Argentina", away: "Austria", date: "22-Jun" },
+                { id: "mJ4", group: "J", home: "Jordania", away: "Argelia", date: "23-Jun" },
+                { id: "mJ5", group: "J", home: "Jordania", away: "Argentina", date: "27-Jun" },
+                { id: "mJ6", group: "J", home: "Argelia", away: "Austria", date: "27-Jun" },
                 // GRUPO K
-                { id: "mK1", group: "K", home: "Suecia", away: "Jamaica", date: "17-Jun" },
-                { id: "mK2", group: "K", home: "Ghana", away: "Uzbekistán", date: "18-Jun" },
-                { id: "mK3", group: "K", home: "Suecia", away: "Ghana", date: "23-Jun" },
-                { id: "mK4", group: "K", home: "Uzbekistán", away: "Jamaica", date: "24-Jun" },
-                { id: "mK5", group: "K", home: "Uzbekistán", away: "Suecia", date: "27-Jun" },
-                { id: "mK6", group: "K", home: "Jamaica", away: "Ghana", date: "27-Jun" },
+                { id: "mK1", group: "K", home: "Portugal", away: "RD Congo", date: "17-Jun" },
+                { id: "mK2", group: "K", home: "Uzbekistán", away: "Colombia", date: "17-Jun" },
+                { id: "mK3", group: "K", home: "Portugal", away: "Uzbekistán", date: "23-Jun" },
+                { id: "mK4", group: "K", home: "Colombia", away: "RD Congo", date: "23-Jun" },
+                { id: "mK5", group: "K", home: "Colombia", away: "Portugal", date: "27-Jun" },
+                { id: "mK6", group: "K", home: "RD Congo", away: "Uzbekistán", date: "27-Jun" },
                 // GRUPO L
-                { id: "mL1", group: "L", home: "Costa de Marfil", away: "Omán", date: "18-Jun" },
-                { id: "mL2", group: "L", home: "Honduras", away: "Turquía", date: "18-Jun" },
-                { id: "mL3", group: "L", home: "Costa de Marfil", away: "Honduras", date: "24-Jun" },
-                { id: "mL4", group: "L", home: "Turquía", away: "Omán", date: "24-Jun" },
-                { id: "mL5", group: "L", home: "Turquía", away: "Costa de Marfil", date: "27-Jun" },
-                { id: "mL6", group: "L", home: "Omán", away: "Honduras", date: "27-Jun" }
+                { id: "mL1", group: "L", home: "Inglaterra", away: "Croacia", date: "17-Jun" },
+                { id: "mL2", group: "L", home: "Ghana", away: "Panamá", date: "17-Jun" },
+                { id: "mL3", group: "L", home: "Inglaterra", away: "Ghana", date: "23-Jun" },
+                { id: "mL4", group: "L", home: "Panamá", away: "Croacia", date: "24-Jun" },
+                { id: "mL5", group: "L", home: "Panamá", away: "Inglaterra", date: "27-Jun" },
+                { id: "mL6", group: "L", home: "Croacia", away: "Ghana", date: "27-Jun" }
             ]
         };
 
@@ -522,7 +545,7 @@
             if(activeTab === 'mis-apuestas') renderSummaryTable(uBets);
         }
 
-        // GUARDAR EN BD
+        // GUARDAR EN BD (SIN RECALCULAR PUNTOS DE FORMA DESTRUCTIVA)
         window.saveAllBets = async function() {
             if(userData?.isDisqualified) return alert("Cuenta penalizada. No puedes apostar.");
 
@@ -534,7 +557,7 @@
                 const homeVal = document.getElementById(`bet-home-${m.id}`).value;
                 const awayVal = document.getElementById(`bet-away-${m.id}`).value;
                 
-                // Solo guardamos si el partido NO ha terminado y si ha rellenado ambos campos
+                // Guardamos solo si el admin no ha cerrado el partido y el campo no está vacío
                 if(!globalResults.matches?.[m.id]?.finished && homeVal !== "" && awayVal !== "") {
                     data.matchBets[m.id] = { home: parseInt(homeVal), away: parseInt(awayVal) };
                 }
@@ -552,8 +575,9 @@
             data.topScorer = document.getElementById('bet-top-scorer').value;
 
             await setDoc(ref, data);
-            alert("¡Grupo " + currentGroupFilter + " guardado con éxito!");
-            // Ejecutamos cálculo reactivo automático
+            alert("¡Predicciones del Grupo " + currentGroupFilter + " guardadas con éxito!");
+            
+            // Evaluamos puntos de forma reactiva y segura sin tocar partidos futuros
             evaluateAndSyncPoints();
         };
 
@@ -578,7 +602,7 @@
             summaryCont.innerHTML = html + `</div>`;
         }
 
-        // MOTOR DE PUNTOS DINÁMICO (ESPERA AL ADMIN)
+        // MOTOR RECONSTRUIDO: ESPERA PACIENTEMENTE AL ADMINISTRADOR
         async function evaluateAndSyncPoints() {
             if(!currentUser) return;
             const snap = await getDoc(doc(db, "bets", currentUser.uid));
@@ -590,24 +614,24 @@
                 const b = uBets.matchBets?.[m.id];
                 const r = globalResults.matches?.[m.id];
 
-                // REGLA FUNDAMENTAL: Solo evaluamos si el administrador ya cerró y cargó el resultado del partido
+                // REGLA CLAVE: Solo calculamos puntos si el partido fue marcado como terminado (finished: true) por el administrador
                 if (r?.finished) {
                     if (!b) { 
-                        // El partido ya se jugó y el usuario NO guardó predicción
+                        // El partido ya concluyó en la realidad pero el usuario no dejó predicción guardada
                         pts -= 2; 
                     } else {
-                        // El partido ya se jugó y SÍ había predicción guardada
+                        // El partido ya concluyó y el usuario sí guardó su jugada
                         const uS = b.home > b.away ? '1' : (b.home < b.away ? '2' : 'X');
                         const rS = r.homeScore > r.awayScore ? '1' : (r.homeScore < r.awayScore ? '2' : 'X');
                         
                         if (b.home === r.homeScore && b.away === r.awayScore) {
-                            pts += 10; // Resultado exacto
+                            pts += 10; // Marcador exacto
                         } else if (uS === rS) {
-                            pts += 5;  // Acertó ganador o empate
+                            pts += 5;  // Tendencia (Ganador o empate)
                         }
                     }
                 }
-                // Si r?.finished es falso o no existe, el partido no se ha jugado, por ende vale 0 puntos y no penaliza temporalmente.
+                // Si r?.finished no existe o es falso, el partido aún no se ha jugado: se ignora por completo y no resta puntos.
             });
 
             // EVALUACIÓN DE LAS CLASIFICACIONES DE GRUPOS
@@ -615,7 +639,6 @@
                 Object.keys(uBets.groupsOrder).forEach(g => {
                     const uO = uBets.groupsOrder[g];
                     const rO = globalResults.groupsOrder?.[g];
-                    // Solo se evalúa si el administrador publicó el orden real definitivo de ese grupo
                     if(rO?.length === 4) {
                         let hits = 0;
                         for(let i=0; i<4; i++) if(uO[i] === rO[i]) hits++;
@@ -627,11 +650,10 @@
                 });
             }
 
-            // EVALUACIÓN DE CAMPEÓN Y MÁXIMO GOLEADOR (AL FINAL DEL MUNDIAL)
             if(globalResults.champion && uBets.champion?.toLowerCase().trim() === globalResults.champion.toLowerCase().trim()) pts += 30;
             if(globalResults.topScorer && uBets.topScorer?.toLowerCase().trim() === globalResults.topScorer.toLowerCase().trim()) pts += 20;
 
-            // Guardar el nuevo puntaje calculado en la ficha del usuario de Firebase de forma asíncrona
+            // Sincronizar en Firebase únicamente si el puntaje cambió
             if(userData && !userData.isDisqualified && userData.points !== pts) {
                 await updateDoc(doc(db, "users", currentUser.uid), { points: pts });
                 document.getElementById('user-display-points').innerText = `${pts} pts`;
@@ -689,12 +711,12 @@
             const id = document.getElementById('admin-match-select').value;
             const h = document.getElementById('admin-score-home').value;
             const a = document.getElementById('admin-score-away').value;
-            if(h === "" || a === "") return alert("Faltan goles.");
+            if(h === "" || a === "") return alert("Faltan marcar los goles del partido.");
 
             if(!globalResults.matches) globalResults.matches = {};
             globalResults.matches[id] = { homeScore: parseInt(h), awayScore: parseInt(a), finished: true };
             await setDoc(doc(db, "results", "global"), globalResults, { merge: true });
-            alert("Marcador oficial publicado. Todos los puntajes se han actualizado automáticamente.");
+            alert("Marcador oficial publicado. Todos los puntajes se recalcularán automáticamente de forma instantánea.");
         };
 
         window.adminAlterPoints = async function(val) {
