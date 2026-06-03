@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porra Mundial 2026 - Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .animate-spin-slow { animation: spin 8s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-900 text-white font-sans min-h-screen flex flex-col hidden" id="app-body"> <div id="winner-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+        <div class="bg-gradient-to-r from-yellow-500 to-amber-600 p-8 rounded-2xl shadow-2xl text-center max-w-md border-4 border-yellow-300 animate-bounce">
+            <i class="fa-solid fa-trophy text-6xl text-yellow-200 mb-4"></i>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">¡FIN DEL MUNDIAL!</h2>
+            <p class="text-xl text-slate-900 font-bold mb-4">¡Enhorabuena, <span id="modal-winner-name" class="underline"></span>!</p>
+            <p class="text-slate-900 font-medium mb-6">Has quedado en 1ª posición. Tu premio es: **¡3 BOLSAS DE CHUCHES!** 🍬🍬🍬</p>
+            <button onclick="closeWinnerModal()" class="bg-slate-900 text-white px-6 py-2 rounded-lg font-bold hover:bg-slate-800 transition">Cerrar</button>
+        </div>
+    </div>
+
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-soccer-ball text-emerald-400 text-2xl animate-spin-slow"></i>
+                <span class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">PORRA MUNDIAL 2026</span>
+            </div>
+            <nav id="main-nav" class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700">
+                <button onclick="switchTab('inicio')" id="btn-inicio" class="px-4 py-2 rounded-lg font-medium text-sm transition">Inicio</button>
+                <button onclick="switchTab('apostar')" id="btn-apostar" class="px-4 py-2 rounded-lg font-medium text-sm transition">Apostar</button>
+                <button onclick="switchTab('mis-apuestas')" id="btn-mis-apuestas" class="px-4 py-2 rounded-lg font-medium text-sm transition">Mis Apuestas</button>
+                <button onclick="switchTab('clasificacion')" id="btn-clasificacion" class="px-4 py-2 rounded-lg font-medium text-sm transition">Clasificación</button>
+                <button onclick="switchTab('admin')" id="btn-admin" class="hidden px-4 py-2 rounded-lg font-medium text-sm bg-red-900/50 text-red-300 border border-red-700 transition">Admin</button>
+            </nav>
+            <div id="auth-status" class="flex items-center gap-3"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6">
+        
+        <section id="tab-inicio" class="space-y-6">
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-2xl border border-slate-700 relative overflow-hidden">
+                <div class="relative z-10 max-w-md">
+                    <h1 class="text-3xl font-black mb-2">¡Bienvenido a la Porra!</h1>
+                    <p class="text-slate-300 text-sm mb-6">Compite con tus amigos prediciendo los resultados del Mundial 2026.</p>
+                    
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-slate-900/80 px-4 py-3 rounded-xl border border-slate-700/50">
+                            <span class="block text-xs text-slate-400 uppercase">Tu puntuación</span>
+                            <span id="user-display-points" class="text-2xl font-black text-emerald-400">0 pts</span>
+                        </div>
+                        <div class="bg-slate-900/80 px-4 py-3 rounded-xl border border-slate-700/50">
+                            <span class="block text-xs text-slate-400 uppercase">Estado de cuenta</span>
+                            <span id="user-display-status" class="text-2xl font-black text-cyan-400">Activo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-emerald-500/10 text-emerald-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-bullseye"></i></div>
+                    <div><h3 class="font-bold text-xs">Resultado Exacto</h3><p class="text-sm font-black text-emerald-400">+10 Pts</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-cyan-500/10 text-cyan-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-gavel"></i></div>
+                    <div><h3 class="font-bold text-xs">Ganador / Empate</h3><p class="text-sm font-black text-cyan-400">+5 Pts</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-purple-500/10 text-purple-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-list-ol"></i></div>
+                    <div><h3 class="font-bold text-xs">Pleno Grupo (4/4)</h3><p class="text-sm font-black text-purple-400">+20 Pts</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-amber-500/10 text-amber-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-circle-nodes"></i></div>
+                    <div><h3 class="font-bold text-xs">Aciertos Parciales</h3><p class="text-xs text-slate-400">3/4=15p | 2/4=10p | 1/4=5p</p></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex gap-3 items-center">
+                    <div class="bg-red-500/10 text-red-400 p-3 rounded-lg text-lg"><i class="fa-solid fa-heart-crack"></i></div>
+                    <div><h3 class="font-bold text-xs">No Apostar Partido</h3><p class="text-sm font-black text-red-400">-2 Pts (Solo jugados)</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-apostar" class="hidden space-y-6">
+            <div class="flex flex-wrap gap-2 overflow-x-auto pb-2 border-b border-slate-700" id="group-tabs-container"></div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-4">
+                    <h2 class="text-xl font-bold flex items-center gap-2 text-emerald-400">
+                        <i class="fa-solid fa-calendar-days"></i> Partidos del Grupo
+                    </h2>
+                    <div id="matches-container" class="space-y-3"></div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                        <h2 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-sort"></i> Clasificación del Grupo
+                        </h2>
+                        <div id="group-order-container" class="space-y-2"></div>
+                    </div>
+
+                    <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700 space-y-4">
+                        <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-crown"></i> Predicciones del Torneo
+                        </h2>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Campeón del Mundo 2026</label>
+                            <input type="text" id="bet-champion" placeholder="Ej. Argentina" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Máximo Goleador (Bota de Oro)</label>
+                            <input type="text" id="bet-top-scorer" placeholder="Ej. Mbappé" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+
+                    <button onclick="saveAllBets()" class="w-full bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl hover:bg-emerald-400 transition shadow-lg shadow-emerald-950/20">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Guardar Todo el Grupo Actual
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-mis-apuestas" class="hidden space-y-6">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-2xl font-black mb-4 text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check"></i> Resumen de Mis Apuestas Guardadas
+                </h2>
+                <div id="my-bets-summary" class="overflow-x-auto"></div>
+            </div>
+        </section>
+
+        <section id="tab-clasificacion" class="hidden space-y-6">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-2xl font-black mb-4 text-cyan-400 flex items-center gap-2">
+                    <i class="fa-solid fa-ranking-star"></i> Clasificación de Usuarios
+                </h2>
+                <div class="overflow-hidden rounded-xl border border-slate-700">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900 text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-700">
+                                <th class="p-4 w-16 text-center">Pos</th>
+                                <th class="p-4">Usuario</th>
+                                <th class="p-4 text-center">Puntos Totales</th>
+                                <th class="p-4 text-right">Premio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-tbody" class="divide-y divide-slate-700/50"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-admin" class="hidden space-y-6">
+            <div class="bg-slate-800 p-6 rounded-2xl border border-red-500/30">
+                <h2 class="text-2xl font-black text-red-400 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-toolbox"></i> Panel de Administrador
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-4">
+                        <h3 class="font-bold text-sm uppercase text-slate-400"><i class="fa-solid fa-square-poll-horizontal text-red-400 mr-1"></i> Marcadores Reales</h3>
+                        <div class="grid grid-cols-3 gap-2 items-center">
+                            <select id="admin-match-select" onchange="updateAdminMatchControls()" class="col-span-3 bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></select>
+                            <input type="number" id="admin-score-home" placeholder="Goles Loc." class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-sm text-white">
+                            <span class="text-center font-bold">vs</span>
+                            <input type="number" id="admin-score-away" placeholder="Goles Vis." class="bg-slate-800 border border-slate-700 rounded-lg p-2 text-center text-sm text-white">
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="adminUpdateMatch()" class="flex-grow bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg text-xs transition">Publicar Marcador</button>
+                            <button id="admin-lock-btn" onclick="adminToggleMatchLock()" class="bg-slate-700 hover:bg-slate-600 text-amber-400 font-bold px-4 py-2 rounded-lg text-xs transition"><i class="fa-solid fa-lock"></i> Cerrar Apuestas</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-4">
+                        <h3 class="font-bold text-sm uppercase text-slate-400"><i class="fa-solid fa-list-ol text-cyan-400 mr-1"></i> Posición Grupos Real</h3>
+                        <select id="admin-group-select" onchange="updateAdminGroupControls()" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></select>
+                        <div id="admin-group-teams-inputs" class="space-y-2"></div>
+                        <button onclick="adminSaveGroupOrder()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-black py-2 rounded-lg text-xs transition">Publicar Orden Grupo Real</button>
+                    </div>
+
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-4">
+                        <h3 class="font-bold text-sm uppercase text-slate-400"><i class="fa-solid fa-users text-purple-400 mr-1"></i> Moderación</h3>
+                        <select id="admin-user-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white mb-2"></select>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="adminAlterPoints(5)" class="bg-emerald-600/20 text-emerald-400 border border-emerald-700 py-2 rounded-lg text-xs font-bold">+5 Pts</button>
+                            <button onclick="adminAlterPoints(-5)" class="bg-amber-600/20 text-amber-400 border border-amber-700 py-2 rounded-lg text-xs font-bold">-5 Pts</button>
+                        </div>
+                        <button onclick="adminToggleDisqualify()" class="w-full bg-rose-900/40 text-rose-300 border border-rose-700 py-2 rounded-lg text-xs font-bold hover:bg-rose-900/60 transition mb-2">Descalificar / Readmitir</button>
+                        <hr class="border-slate-800">
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <input type="text" id="admin-real-champion" placeholder="Campeón Real" class="bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-xs text-white">
+                            <input type="text" id="admin-real-scorer" placeholder="Bota Oro Real" class="bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-xs text-white">
+                        </div>
+                        <button onclick="adminSaveGlobalWinners()" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold py-1.5 rounded-lg text-[11px] transition">Publicar Campeón y Máx Goleador Real</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        &copy; 2026 Porra Mundial. Desarrollado por Álvaro Guerrero. Idea de Diego de la Cruz.
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAL1kyOtdo7M9sJSuZHi2dM_CxUEARSlDI",
+            authDomain: "mundial-eeb29.firebaseapp.com",
+            projectId: "mundial-eeb29",
+            storageBucket: "mundial-eeb29.firebasestorage.app",
+            messagingSenderId: "406509376337",
+            appId: "1:406509376337:web:acd37572d1231e80f77970"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const ADMIN_EMAIL = "alvaro.guerreromaldonado@alumno.fomento.edu"; 
+
+        let currentUser = null;
+        let userData = null;
+        let activeTab = 'inicio';
+        let currentGroupFilter = 'A';
+        let allUsers = [];
+        let globalResults = { matches: {}, groupsOrder: {}, champion: "", topScorer: "" };
+
+        const worldCupData = {
+            groups: {
+                A: ["México", "Sudáfrica", "República de Corea", "República Checa"],
+                B: ["Canadá", "Bosnia y Herzegovina", "Catar", "Suiza"],
+                C: ["Brasil", "Marruecos", "Haití", "Escocia"],
+                D: ["Estados Unidos", "Paraguay", "Australia", "Turquía"],
+                E: ["Alemania", "Curazao", "Costa de Marfil", "Ecuador"],
+                F: ["Países Bajos", "Japón", "Suecia", "Túnez"],
+                G: ["Bélgica", "Egipto", "RI de Irán", "Nueva Zelanda"],
+                H: ["España", "Cabo Verde", "Arabia Saudí", "Uruguay"],
+                I: ["Francia", "Senegal", "Irak", "Noruega"],
+                J: ["Argentina", "Argelia", "Austria", "Jordania"],
+                K: ["Portugal", "RD Congo", "Uzbekistán", "Colombia"],
+                L: ["Inglaterra", "Croacia", "Ghana", "Panamá"]
+            },
+            matches: [
+                { id: "mA1", group: "A", home: "México", away: "Sudáfrica", date: "11-Jun" },
+                { id: "mA2", group: "A", home: "República de Corea", away: "República Checa", date: "11-Jun" },
+                { id: "mA3", group: "A", home: "México", away: "República de Corea", date: "18-Jun" },
+                { id: "mA4", group: "A", home: "República Checa", away: "Sudáfrica", date: "18-Jun" },
+                { id: "mA5", group: "A", home: "República Checa", away: "México", date: "24-Jun" },
+                { id: "mA6", group: "A", home: "Sudáfrica", away: "República de Corea", date: "24-Jun" },
+                { id: "mB1", group: "B", home: "Canadá", away: "Bosnia y Herzegovina", date: "12-Jun" },
+                { id: "mB2", group: "B", home: "Catar", away: "Suiza", date: "13-Jun" },
+                { id: "mB3", group: "B", home: "Canadá", away: "Catar", date: "18-Jun" },
+                { id: "mB4", group: "B", home: "Suiza", away: "Bosnia y Herzegovina", date: "18-Jun" },
+                { id: "mB5", group: "B", home: "Suiza", away: "Canadá", date: "24-Jun" },
+                { id: "mB6", group: "B", home: "Bosnia y Herzegovina", away: "Catar", date: "24-Jun" },
+                { id: "mC1", group: "C", home: "Brasil", away: "Marruecos", date: "13-Jun" },
+                { id: "mC2", group: "C", home: "Haití", away: "Escocia", date: "13-Jun" },
+                { id: "mC3", group: "C", home: "Brasil", away: "Haití", date: "19-Jun" },
+                { id: "mC4", group: "C", home: "Escocia", away: "Marruecos", date: "19-Jun" },
+                { id: "mC5", group: "C", home: "Escocia", away: "Brasil", date: "24-Jun" },
+                { id: "mC6", group: "C", home: "Marruecos", away: "Haití", date: "24-Jun" },
+                { id: "mD1", group: "D", home: "Estados Unidos", away: "Paraguay", date: "12-Jun" },
+                { id: "mD2", group: "D", home: "Australia", away: "Turquía", date: "13-Jun" },
+                { id: "mD3", group: "D", home: "Estados Unidos", away: "Australia", date: "19-Jun" },
+                { id: "mD4", group: "D", home: "Turquía", away: "Paraguay", date: "19-Jun" },
+                { id: "mD5", group: "D", home: "Turquía", away: "Estados Unidos", date: "25-Jun" },
+                { id: "mD6", group: "D", home: "Paraguay", away: "Australia", date: "25-Jun" },
+                { id: "mE1", group: "E", home: "Alemania", away: "Curazao", date: "14-Jun" },
+                { id: "mE2", group: "E", home: "Costa de Marfil", away: "Ecuador", date: "14-Jun" },
+                { id: "mE3", group: "E", home: "Alemania", away: "Costa de Marfil", date: "20-Jun" },
+                { id: "mE4", group: "E", home: "Ecuador", away: "Curazao", date: "20-Jun" },
+                { id: "mE5", group: "E", home: "Ecuador", away: "Alemania", date: "25-Jun" },
+                { id: "mE6", group: "E", home: "Curazao", away: "Costa de Marfil", date: "25-Jun" },
+                { id: "mF1", group: "F", home: "Países Bajos", away: "Japón", date: "14-Jun" },
+                { id: "mF2", group: "F", home: "Suecia", away: "Túnez", date: "14-Jun" },
+                { id: "mF3", group: "F", home: "Países Bajos", away: "Suecia", date: "20-Jun" },
+                { id: "mF4", group: "F", home: "Túnez", away: "Japón", date: "20-Jun" },
+                { id: "mF5", group: "F", home: "Túnez", away: "Países Bajos", date: "25-Jun" },
+                { id: "mF6", group: "F", home: "Japón", away: "Suecia", date: "25-Jun" },
+                { id: "mG1", group: "G", home: "Bélgica", away: "Egipto", date: "15-Jun" },
+                { id: "mG2", group: "G", home: "RI de Irán", away: "Nueva Zelanda", date: "15-Jun" },
+                { id: "mG3", group: "G", home: "Bélgica", away: "RI de Irán", date: "21-Jun" },
+                { id: "mG4", group: "G", home: "Nueva Zelanda", away: "Egipto", date: "21-Jun" },
+                { id: "mG5", group: "G", home: "Nueva Zelanda", away: "Bélgica", date: "26-Jun" },
+                { id: "mG6", group: "G", home: "Egipto", away: "RI de Irán", date: "26-Jun" },
+                { id: "mH1", group: "H", home: "España", away: "Cabo Verde", date: "15-Jun" },
+                { id: "mH2", group: "H", home: "Arabia Saudí", away: "Uruguay", date: "15-Jun" },
+                { id: "mH3", group: "H", home: "España", away: "Arabia Saudí", date: "21-Jun" },
+                { id: "mH4", group: "H", home: "Uruguay", away: "Cabo Verde", date: "22-Jun" },
+                { id: "mH5", group: "H", home: "Uruguay", away: "España", date: "26-Jun" },
+                { id: "mH6", group: "H", home: "Cabo Verde", away: "Arabia Saudí", date: "26-Jun" },
+                { id: "mI1", group: "I", home: "Francia", away: "Senegal", date: "16-Jun" },
+                { id: "mI2", group: "I", home: "Irak", away: "Noruega", date: "16-Jun" },
+                { id: "mI3", group: "I", home: "Francia", away: "Irak", date: "22-Jun" },
+                { id: "mI4", group: "I", home: "Noruega", away: "Senegal", date: "22-Jun" },
+                { id: "mI5", group: "I", home: "Noruega", away: "Francia", date: "26-Jun" },
+                { id: "mI6", group: "I", home: "Senegal", away: "Irak", date: "26-Jun" },
+                { id: "mJ1", group: "J", home: "Argentina", away: "Argelia", date: "16-Jun" },
+                { id: "mJ2", group: "J", home: "Austria", away: "Jordania", date: "16-Jun" },
+                { id: "mJ3", group: "J", home: "Argentina", away: "Austria", date: "22-Jun" },
+                { id: "mJ4", group: "J", home: "Jordania", away: "Argelia", date: "23-Jun" },
+                { id: "mJ5", group: "J", home: "Jordania", away: "Argentina", date: "27-Jun" },
+                { id: "mJ6", group: "J", home: "Argelia", away: "Austria", date: "27-Jun" },
+                { id: "mK1", group: "K", home: "Portugal", away: "RD Congo", date: "17-Jun" },
+                { id: "mK2", group: "K", home: "Uzbekistán", away: "Colombia", date: "17-Jun" },
+                { id: "mK3", group: "K", home: "Portugal", away: "Uzbekistán", date: "23-Jun" },
+                { id: "mK4", group: "K", home: "Colombia", away: "RD Congo", date: "23-Jun" },
+                { id: "mK5", group: "K", home: "Colombia", away: "Portugal", date: "27-Jun" },
+                { id: "mK6", group: "K", home: "RD Congo", away: "Uzbekistán", date: "27-Jun" },
+                { id: "mL1", group: "L", home: "Inglaterra", away: "Croacia", date: "17-Jun" },
+                { id: "mL2", group: "L", home: "Ghana", away: "Panamá", date: "17-Jun" },
+                { id: "mL3", group: "L", home: "Inglaterra", away: "Ghana", date: "23-Jun" },
+                { id: "mL4", group: "L", home: "Panamá", away: "Croacia", date: "24-Jun" },
+                { id: "mL5", group: "L", home: "Panamá", away: "Inglaterra", date: "27-Jun" },
+                { id: "mL6", group: "L", home: "Croacia", away: "Ghana", date: "27-Jun" }
+            ]
+        };
+
+        // SEGURIDAD CENTRAL: Comprobar sesión activa
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "index.html"; // Echar fuera si no está logueado
+            } else {
+                currentUser = user;
+                document.getElementById('app-body').classList.remove('hidden'); // Mostrar app
+                
+                const uDoc = await getDoc(doc(db, "users", user.uid));
+                if(uDoc.exists()) {
+                    userData = uDoc.data();
+                    document.getElementById('user-display-points').innerText = `${userData.points || 0} pts`;
+                    document.getElementById('user-display-status').innerText = userData.isDisqualified ? 'Descalificado' : 'Activo';
+                }
+                
+                document.getElementById('auth-status').innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-slate-300">${userData?.nickname || user.email}</span>
+                        <button onclick="logout()" class="text-slate-400 hover:text-red-400 text-sm"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>`;
+                
+                if(user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                    document.getElementById('btn-admin').classList.remove('hidden');
+                    initAdminPanel();
+                }
+
+                onSnapshot(doc(db, "results", "global"), (snap) => {
+                    if(snap.exists()) { 
+                        globalResults = snap.data(); 
+                        evaluateAndSyncPoints(); 
+                        if(activeTab === 'apostar') renderApostarTab();
+                        if(user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                            updateAdminMatchControls();
+                            updateAdminGroupControls();
+                        }
+                    }
+                });
+                switchTab('inicio');
+            }
+        });
+
+        window.logout = function() { signOut(auth); };
+
+        window.switchTab = function(tabId) {
+            activeTab = tabId;
+            ['tab-inicio', 'tab-apostar', 'tab-mis-apuestas', 'tab-clasificacion', 'tab-admin'].forEach(id => {
+                const el = document.getElementById(`tab-${id}`);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            
+            document.querySelectorAll('#main-nav button').forEach(btn => {
+                btn.classList.remove('bg-emerald-500', 'text-slate-950');
+                btn.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-emerald-500', 'text-slate-950');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            if(tabId === 'apostar' || tabId === 'mis-apuestas') renderApostarTab();
+            if(tabId === 'clasificacion') fetchLeaderboard();
+        };
+
+        function buildGroupTabs() {
+            const container = document.getElementById('group-tabs-container');
+            if(!container) return;
+            container.innerHTML = '';
+            Object.keys(worldCupData.groups).forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = `px-3 py-1.5 rounded-lg text-xs font-bold transition ${currentGroupFilter === g ? 'bg-cyan-500 text-slate-900' : 'bg-slate-800 text-slate-300'}`;
+                btn.innerText = `Grupo ${g}`;
+                btn.onclick = () => { currentGroupFilter = g; renderApostarTab(); };
+                container.appendChild(btn);
+            });
+        }
+
+        async function renderApostarTab() {
+            buildGroupTabs();
+            const matchesCont = document.getElementById('matches-container');
+            const orderCont = document.getElementById('group-order-container');
+            if(!matchesCont || !orderCont) return;
+            matchesCont.innerHTML = ''; orderCont.innerHTML = '';
+
+            const bSnap = await getDoc(doc(db, "bets", currentUser.uid));
+            const uBets = bSnap.exists() ? bSnap.data() : { matchBets: {}, groupsOrder: {}, champion: "", topScorer: "" };
+
+            if(uBets.champion) document.getElementById('bet-champion').value = uBets.champion;
+            if(uBets.topScorer) document.getElementById('bet-top-scorer').value = uBets.topScorer;
+
+            worldCupData.matches.filter(m => m.group === currentGroupFilter).forEach(m => {
+                const saved = uBets.matchBets?.[m.id] || { home: "", away: "" };
+                const real = globalResults.matches?.[m.id];
+                const isFin = real?.finished;
+                const isLocked = real?.locked || isFin;
+
+                const card = document.createElement('div');
+                card.className = `bg-slate-800 p-4 rounded-xl border ${isLocked ? 'border-amber-500/40 bg-slate-800/60' : 'border-slate-700'} flex flex-wrap items-center justify-between gap-4`;
+                card.innerHTML = `
+                    <div class="text-xs font-semibold text-slate-400 w-12">${m.date}</div>
+                    <div class="flex items-center gap-3 flex-grow justify-center">
+                        <span class="font-bold text-sm text-right w-24 sm:w-32">${m.home}</span>
+                        <input type="number" value="${saved.home}" id="bet-home-${m.id}" ${isLocked ? 'disabled' : ''} class="w-12 bg-slate-900 border border-slate-600 rounded-lg text-center py-1 text-sm text-white disabled:opacity-50">
+                        <span class="text-slate-500 text-xs">vs</span>
+                        <input type="number" value="${saved.away}" id="bet-away-${m.id}" ${isLocked ? 'disabled' : ''} class="w-12 bg-slate-900 border border-slate-600 rounded-lg text-center py-1 text-sm text-white disabled:opacity-50">
+                        <span class="font-bold text-sm text-left w-24 sm:w-32">${m.away}</span>
+                    </div>
+                    <div class="text-right text-xs">
+                        ${isFin ? `<span class="bg-slate-900 px-2 py-1 rounded text-amber-400">Real: ${real.homeScore}-${real.awayScore}</span>` : 
+                          isLocked ? '<span class="text-amber-500 font-bold text-[11px] bg-amber-950/40 px-2 py-1 rounded"><i class="fa-solid fa-lock"></i> Cerrado</span>' : 
+                          '<span class="text-emerald-500 text-[11px]"><i class="fa-solid fa-lock-open"></i> Abierto</span>'}
+                    </div>`;
+                matchesCont.appendChild(card);
+            });
+
+            const teams = worldCupData.groups[currentGroupFilter];
+            const savedOrder = uBets.groupsOrder?.[currentGroupFilter] || ["", "", "", ""];
+            for (let i = 0; i < 4; i++) {
+                const row = document.createElement('div');
+                row.className = "flex items-center gap-2";
+                let opts = `<option value="">-- Seleccionar --</option>`;
+                teams.forEach(t => opts += `<option value="${t}" ${savedOrder[i] === t ? 'selected' : ''}>${t}</option>`);
+                row.innerHTML = `
+                    <span class="w-8 text-xs font-bold text-slate-500">${i+1}º</span>
+                    <select id="bet-order-${currentGroupFilter}-${i}" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">${opts}</select>`;
+                orderCont.appendChild(row);
+            }
+
+            if(activeTab === 'mis-apuestas') renderSummaryTable(uBets);
+        }
+
+        window.saveAllBets = async function() {
+            if(userData?.isDisqualified) return alert("Cuenta penalizada. No puedes apostar.");
+
+            const ref = doc(db, "bets", currentUser.uid);
+            const snap = await getDoc(ref);
+            let data = snap.exists() ? snap.data() : { matchBets: {}, groupsOrder: {}, champion: "", topScorer: "" };
+
+            worldCupData.matches.filter(m => m.group === currentGroupFilter).forEach(m => {
+                const homeVal = document.getElementById(`bet-home-${m.id}`).value;
+                const awayVal = document.getElementById(`bet-away-${m.id}`).value;
+                const real = globalResults.matches?.[m.id];
+                if(!(real?.locked || real?.finished)) {
+                    if(homeVal !== "" && awayVal !== "") {
+                        data.matchBets[m.id] = { home: parseInt(homeVal), away: parseInt(awayVal) };
+                    }
+                }
+            });
+
+            if(!data.groupsOrder) data.groupsOrder = {};
+            data.groupsOrder[currentGroupFilter] = [
+                document.getElementById(`bet-order-${currentGroupFilter}-0`).value,
+                document.getElementById(`bet-order-${currentGroupFilter}-1`).value,
+                document.getElementById(`bet-order-${currentGroupFilter}-2`).value,
+                document.getElementById(`bet-order-${currentGroupFilter}-3`).value
+            ];
+
+            data.champion = document.getElementById('bet-champion').value;
+            data.topScorer = document.getElementById('bet-top-scorer').value;
+
+            await setDoc(ref, data);
+            alert("¡Predicciones guardadas con éxito!");
+            evaluateAndSyncPoints();
+        };
+
+        function renderSummaryTable(bets) {
+            const summaryCont = document.getElementById('my-bets-summary');
+            let html = `<div class="space-y-2 text-sm">`;
+            html += `<p class="text-amber-400 font-bold">Campeón: <span class="text-white">${bets.champion || 'Sin definir'}</span></p>`;
+            html += `<p class="text-amber-400 font-bold mb-4">Bota de Oro: <span class="text-white">${bets.topScorer || 'Sin definir'}</span></p>`;
+            
+            worldCupData.matches.forEach(m => {
+                const b = bets.matchBets?.[m.id];
+                const real = globalResults.matches?.[m.id];
+                let statusText = 'No apostado';
+                if (b) statusText = `${b.home} - ${b.away}`;
+                else if (real?.finished || real?.locked) statusText = 'No apostado (Penalizado -2 pts)';
+
+                html += `<div class="flex justify-between py-1 border-b border-slate-800 text-xs">
+                    <span>[Grupo ${m.group}] ${m.home} vs ${m.away}</span>
+                    <span class="font-mono ${b ? 'text-emerald-400' : 'text-red-400'}">${statusText}</span>
+                </div>`;
+            });
+            summaryCont.innerHTML = html + `</div>`;
+        }
+
+        async function evaluateAndSyncPoints() {
+            if(!currentUser) return;
+            const snap = await getDoc(doc(db, "bets", currentUser.uid));
+            if(!snap.exists()) return;
+            const uBets = snap.data();
+            let pts = 0;
+
+            worldCupData.matches.forEach(m => {
+                const b = uBets.matchBets?.[m.id];
+                const r = globalResults.matches?.[m.id];
+
+                if (r?.finished || r?.locked) {
+                    if (!b) { pts -= 2; } 
+                    else if (r?.finished) {
+                        const uS = b.home > b.away ? '1' : (b.home < b.away ? '2' : 'X');
+                        const rS = r.homeScore > r.awayScore ? '1' : (r.homeScore < r.awayScore ? '2' : 'X');
+                        if (b.home === r.homeScore && b.away === r.awayScore) pts += 10; 
+                        else if (uS === rS) pts += 5;
+                    }
+                }
+            });
+
+            if(uBets.groupsOrder) {
+                Object.keys(uBets.groupsOrder).forEach(g => {
+                    const uO = uBets.groupsOrder[g];
+                    const rO = globalResults.groupsOrder?.[g];
+                    if(rO?.length === 4) {
+                        let hits = 0;
+                        for(let i=0; i<4; i++) if(uO[i] === rO[i]) hits++;
+                        if(hits === 4) pts += 20;
+                        else if(hits === 3) pts += 15;
+                        else if(hits === 2) pts += 10;
+                        else if(hits === 1) pts += 5;
+                    }
+                });
+            }
+
+            if(globalResults.champion && uBets.champion?.toLowerCase().trim() === globalResults.champion.toLowerCase().trim()) pts += 30;
+            if(globalResults.topScorer && uBets.topScorer?.toLowerCase().trim() === globalResults.topScorer.toLowerCase().trim()) pts += 20;
+
+            if(userData && !userData.isDisqualified && userData.points !== pts) {
+                await updateDoc(doc(db, "users", currentUser.uid), { points: pts });
+                document.getElementById('user-display-points').innerText = `${pts} pts`;
+            }
+
+            if (globalResults.champion) {
+                const qSnap = await getDocs(query(collection(db, "users"), orderBy("points", "desc")));
+                let currentLeaderboard = [];
+                qSnap.forEach(d => { if(!d.data().isDisqualified) currentLeaderboard.push(d.data()); });
+                
+                if (currentLeaderboard.length > 0 && currentLeaderboard[0].email === userData?.email) {
+                    document.getElementById('modal-winner-name').innerText = currentLeaderboard[0].nickname;
+                    document.getElementById('winner-modal').classList.remove('hidden');
+                }
+            }
+        }
+
+        async function fetchLeaderboard() {
+            const tbody = document.getElementById('leaderboard-tbody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            const querySnapshot = await getDocs(query(collection(db, "users"), orderBy("points", "desc")));
+            allUsers = []; 
+            let idx = 1;
+
+            querySnapshot.forEach((docSnap) => {
+                const u = docSnap.data(); u.id = docSnap.id; 
+                allUsers.push(u);
+            });
+
+            allUsers.forEach((u) => {
+                const tr = document.createElement('tr');
+                tr.className = u.isDisqualified ? "opacity-30 bg-rose-950/20" : "hover:bg-slate-800/40";
+                
+                let prizeHtml = `<span class="text-slate-500">---</span>`;
+                if (globalResults.champion && !u.isDisqualified) {
+                    if (idx === 1) prizeHtml = `<span class="text-xs font-bold text-yellow-400">3 Bolsas 🍬</span>`;
+                    else if (idx === 2) prizeHtml = `<span class="text-xs font-bold text-slate-300">2 Bolsas 🍬</span>`;
+                    else if (idx === 3) prizeHtml = `<span class="text-xs font-bold text-amber-600">1 Bolsa 🍬</span>`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-4 text-center font-bold text-slate-400">${idx++}</td>
+                    <td class="p-4 font-bold text-slate-200">${u.nickname}</td>
+                    <td class="p-4 text-center font-black text-emerald-400">${u.points || 0}</td>
+                    <td class="p-4 text-right">${u.isDisqualified ? '<span class="text-rose-400 text-xs font-bold">Baneado</span>' : prizeHtml}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.closeWinnerModal = function() { document.getElementById('winner-modal').classList.add('hidden'); };
+
+        function initAdminPanel() {
+            const matchSelect = document.getElementById('admin-match-select');
+            if(!matchSelect) return;
+            matchSelect.innerHTML = '';
+            worldCupData.matches.forEach(m => {
+                const o = document.createElement('option'); o.value = m.id;
+                o.innerText = `[Grupo ${m.group}] ${m.home} vs ${m.away}`;
+                matchSelect.appendChild(o);
+            });
+
+            const groupSelect = document.getElementById('admin-group-select');
+            groupSelect.innerHTML = '';
+            Object.keys(worldCupData.groups).forEach(g => {
+                const o = document.createElement('option'); o.value = g;
+                o.innerText = `Grupo ${g}`;
+                groupSelect.appendChild(o);
+            });
+
+            refreshAdminUsers();
+            updateAdminMatchControls();
+            updateAdminGroupControls();
+        }
+
+        window.updateAdminMatchControls = function() {
+            const id = document.getElementById('admin-match-select').value;
+            if(!id) return;
+            const real = globalResults.matches?.[id];
+            const btn = document.getElementById('admin-lock-btn');
+            if(real?.locked) {
+                btn.innerHTML = `<i class="fa-solid fa-lock-open"></i> Abrir Apuestas`;
+                btn.className = "bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg text-xs transition";
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-lock"></i> Cerrar Apuestas`;
+                btn.className = "bg-slate-700 hover:bg-slate-600 text-amber-400 font-bold px-4 py-2 rounded-lg text-xs transition";
+            }
+        };
+
+        window.adminToggleMatchLock = async function() {
+            const id = document.getElementById('admin-match-select').value;
+            if(!id) return;
+            if(!globalResults.matches) globalResults.matches = {};
+            if(!globalResults.matches[id]) globalResults.matches[id] = { homeScore: "", awayScore: "", finished: false, locked: false };
+            globalResults.matches[id].locked = !globalResults.matches[id].locked;
+            await setDoc(doc(db, "results", "global"), globalResults, { merge: true });
+        };
+
+        window.updateAdminGroupControls = function() {
+            const g = document.getElementById('admin-group-select').value;
+            if(!g) return;
+            const teams = worldCupData.groups[g];
+            const savedRealOrder = globalResults.groupsOrder?.[g] || ["", "", "", ""];
+            const cont = document.getElementById('admin-group-teams-inputs');
+            cont.innerHTML = '';
+            for(let i=0; i<4; i++) {
+                let opts = `<option value="">-- Seleccionar --</option>`;
+                teams.forEach(t => opts += `<option value="${t}" ${savedRealOrder[i] === t ? 'selected' : ''}>${t}</option>`);
+                cont.innerHTML += `
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-slate-400 w-6">${i+1}º</span>
+                        <select id="admin-order-${g}-${i}" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-xs text-white">${opts}</select>
+                    </div>`;
+            }
+        };
+
+        window.adminSaveGroupOrder = async function() {
+            const g = document.getElementById('admin-group-select').value;
+            if(!g) return;
+            if(!globalResults.groupsOrder) globalResults.groupsOrder = {};
+            globalResults.groupsOrder[g] = [
+                document.getElementById(`admin-order-${g}-0`).value,
+                document.getElementById(`admin-order-${g}-1`).value,
+                document.getElementById(`admin-order-${g}-2`).value,
+                document.getElementById(`admin-order-${g}-3`).value
+            ];
+            await setDoc(doc(db, "results", "global"), globalResults, { merge: true });
+            alert(`¡Clasificación real del Grupo ${g} publicada!`);
+        };
+
+        window.adminSaveGlobalWinners = async function() {
+            const champ = document.getElementById('admin-real-champion').value;
+            const scorer = document.getElementById('admin-real-scorer').value;
+            globalResults.champion = champ;
+            globalResults.topScorer = scorer;
+            await setDoc(doc(db, "results", "global"), globalResults, { merge: true });
+            alert("¡Resultados finales publicados!");
+        };
+
+        async function refreshAdminUsers() {
+            const select = document.getElementById('admin-user-select'); if(!select) return;
+            select.innerHTML = '';
+            const snap = await getDocs(collection(db, "users"));
+            snap.forEach(d => {
+                const u = d.data(); const o = document.createElement('option'); o.value = d.id;
+                o.innerText = `${u.nickname} (${u.points}p) - ${u.isDisqualified?'Baneado':'Activo'}`;
+                select.appendChild(o);
+            });
+        }
+
+        window.adminUpdateMatch = async function() {
+            const id = document.getElementById('admin-match-select').value;
+            const h = document.getElementById('admin-score-home').value;
+            const a = document.getElementById('admin-score-away').value;
+            if(h === "" || a === "") return alert("Faltan marcar los goles del partido.");
+            if(!globalResults.matches) globalResults.matches = {};
+            globalResults.matches[id] = { homeScore: parseInt(h), awayScore: parseInt(a), finished: true, locked: true };
+            await setDoc(doc(db, "results", "global"), globalResults, { merge: true });
+            alert("Marcador oficial publicado.");
+        };
+
+        window.adminAlterPoints = async function(val) {
+            const id = document.getElementById('admin-user-select').value;
+            const ref = doc(db, "users", id); const s = await getDoc(ref);
+            if(s.exists()) {
+                await updateDoc(ref, { points: (s.data().points || 0) + val });
+                refreshAdminUsers();
+            }
+        };
+
+        window.adminToggleDisqualify = async function() {
+            const id = document.getElementById('admin-user-select').value;
+            if(!id) return alert("Selecciona un usuario.");
+            const ref = doc(db, "users", id); const s = await getDoc(ref);
+            if(s.exists()) {
+                await updateDoc(ref, { isDisqualified: !s.data().isDisqualified });
+                refreshAdminUsers();
+            }
+        };
+    </script>
+</body>
+</html>
