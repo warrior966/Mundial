@@ -368,26 +368,32 @@
         window.logout = function() { signOut(auth); };
 
         window.switchTab = function(tabId) {
-            activeTab = tabId;
-            ['tab-inicio', 'tab-apostar', 'tab-mis-apuestas', 'tab-clasificacion', 'tab-admin'].forEach(id => {
-                const el = document.getElementById(`tab-${id}`);
-                if(el) el.classList.add('hidden');
-            });
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            
-            document.querySelectorAll('#main-nav button').forEach(btn => {
-                btn.classList.remove('bg-emerald-500', 'text-slate-950');
-                btn.classList.add('text-slate-400');
-            });
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if(activeBtn) {
-                activeBtn.classList.add('bg-emerald-500', 'text-slate-950');
-                activeBtn.classList.remove('text-slate-400');
-            }
+    activeTab = tabId;
+    
+    // CORREGIDO: Ahora usa los IDs exactos de los sections
+    ['tab-inicio', 'tab-apostar', 'tab-mis-apuestas', 'tab-clasificacion', 'tab-admin'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+    });
+    
+    // Mostramos solo la pestaña activa
+    const activeSection = document.getElementById(`tab-${tabId}`);
+    if(activeSection) activeSection.classList.remove('hidden');
+    
+    // Gestionar el diseño de los botones del menú
+    document.querySelectorAll('#main-nav button').forEach(btn => {
+        btn.classList.remove('bg-emerald-500', 'text-slate-950');
+        btn.classList.add('text-slate-400');
+    });
+    const activeBtn = document.getElementById(`btn-${tabId}`);
+    if(activeBtn) {
+        activeBtn.classList.add('bg-emerald-500', 'text-slate-950');
+        activeBtn.classList.remove('text-slate-400');
+    }
 
-            if(tabId === 'apostar' || tabId === 'mis-apuestas') renderApostarTab();
-            if(tabId === 'clasificacion') fetchLeaderboard();
-        };
+    if(tabId === 'apostar' || tabId === 'mis-apuestas') renderApostarTab();
+    if(tabId === 'clasificacion') fetchLeaderboard();
+};
 
         function buildGroupTabs() {
             const container = document.getElementById('group-tabs-container');
