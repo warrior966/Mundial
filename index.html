@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Porra Mundial 2026 - Las Tablas</title>
+    <title>Porra Mundial 2026 - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -43,7 +43,6 @@
         </form>
     </div>
 
-    <!-- LÓGICA FIREBASE DE AUTENTICACIÓN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -62,9 +61,14 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Si ya está logueado, mandarlo directo a la app sin pasar por el login
+        // Control de redirección automático si ya hay sesión iniciada
         onAuthStateChanged(auth, (user) => {
-            if (user) { window.location.href = "app.html"; }
+            // Solo redirigimos automáticamente si el formulario NO está en modo registro,
+            // para evitar que se mueva de página antes de crear el documento de Firestore.
+            const isLoginMode = document.getElementById('field-nickname').classList.contains('hidden');
+            if (user && isLoginMode) { 
+                window.location.href = "app.html"; 
+            }
         });
 
         window.toggleAuthMode = function(isLogin) {
@@ -93,21 +97,37 @@
             const nickname = document.getElementById('auth-nickname').value;
             const isLogin = document.getElementById('field-nickname').classList.contains('hidden');
 
+            const submitBtn = document.getElementById('auth-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = isLogin ? "Cargando..." : "Creando cuenta...";
+
             try {
                 if(isLogin) {
                     await signInWithEmailAndPassword(auth, email, password);
+                    window.location.href = "app.html";
                 } else {
+                    // 1. Crear usuario en Firebase Authentication
                     const res = await createUserWithEmailAndPassword(auth, email, password);
-                    await setDoc(doc(db, "users", res.user.uid), {
-                        nickname: nickname || email.split('@')[0],
+                    
+                    // Definir datos del perfil a guardar
+                    const userProfile = {
+                        nickname: nickname.trim() !== "" ? nickname : email.split('@')[0],
                         email: email,
                         points: 0,
                         isDisqualified: false
-                    });
+                    };
+
+                    // 2. Obligar al sistema a esperar que termine la escritura en Firestore
+                    await setDoc(doc(db, "users", res.user.uid), userProfile);
+                    
+                    // 3. Hecho esto, mandamos al panel
                     window.location.href = "app.html";
                 }
             } catch (err) { 
+                console.error("Error en proceso:", err);
                 alert("Error de autenticación: " + err.message); 
+                submitBtn.disabled = false;
+                submitBtn.innerText = isLogin ? "Entrar" : "Crear Cuenta";
             }
         };
     </script>
