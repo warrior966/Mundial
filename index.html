@@ -3,51 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Porra Mundial 2026 - Login</title>
+    <title>Porra Mundial 2026 - Acceso</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Script Oficial de Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="bg-slate-900 text-white font-sans min-h-screen flex flex-col justify-center items-center p-4">
 
-    <div class="w-full max-w-md bg-slate-800 p-8 rounded-2xl border border-slate-700 shadow-xl">
-        <div class="flex items-center gap-2 justify-center mb-6">
-            <i class="fa-solid fa-soccer-ball text-emerald-400 text-2xl"></i>
-            <span class="text-xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">PORRA MUNDIAL 2026</span>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="bg-slate-800 p-6 sm:p-8 rounded-2xl border border-slate-700 w-full max-w-md shadow-2xl relative overflow-hidden">
+        
+        <!-- LOGO Y TITULO -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center bg-emerald-500/10 text-emerald-400 p-4 rounded-full mb-3 border border-emerald-500/20">
+                <i class="fa-solid fa-soccer-ball text-4xl animate-bounce"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-wider bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">PORRA MUNDIAL 2026</h1>
+            <p class="text-xs text-slate-400 mt-1">Compite, predice y gana el premio definitivo 🍬</p>
         </div>
 
-        <div class="flex justify-center gap-4 mb-8 border-b border-slate-700 pb-4">
-            <button id="toggle-login" onclick="toggleAuthMode(true)" class="text-xl font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-2">Ingresar</button>
-            <button id="toggle-register" onclick="toggleAuthMode(false)" class="text-xl font-bold text-slate-400 pb-2 px-2">Registrarse</button>
+        <!-- SELECTOR DE PESTAÑAS (LOGIN / REGISTRO) -->
+        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 mb-6">
+            <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg font-bold text-sm bg-emerald-500 text-slate-950 transition">
+                Iniciar Sesión
+            </button>
+            <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg font-bold text-sm text-slate-400 transition">
+                Registrarse
+            </button>
         </div>
-        
+
+        <!-- FORMULARIO -->
         <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
-            <div id="field-nickname" class="hidden">
-                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Apodo (Nickname)</label>
-                <input type="text" id="auth-nickname" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
-            </div>
             <div>
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo Electrónico</label>
-                <input type="email" id="auth-email" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500"><i class="fa-solid fa-envelope"></i></span>
+                    <input type="email" id="auth-email" required placeholder="tu@correo.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 transition">
+                </div>
             </div>
+
             <div>
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Contraseña</label>
-                <input type="password" id="auth-password" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500">
-            </div>
-            
-            <div class="bg-amber-950/40 border border-amber-700/60 p-3 rounded-xl flex gap-3 text-amber-300 text-xs">
-                <i class="fa-solid fa-triangle-exclamation text-base mt-0.5 flex-shrink-0"></i>
-                <p><strong>Aviso importante:</strong> Por motivos de diseño de seguridad de este sistema, la contraseña <strong>no se puede ni cambiar ni recuperar</strong> bajo ningún término tras crear la cuenta.</p>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500"><i class="fa-solid fa-lock"></i></span>
+                    <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 transition">
+                </div>
             </div>
 
-            <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-bold py-3 rounded-xl hover:opacity-90 transition mt-2">Entrar</button>
+            <!-- CONTENEDOR DE RECAPTCHA (Siempre visible para ambos modos) -->
+            <div id="recaptcha-container" class="flex justify-center py-2">
+                <!-- Integración de tu clave pública de Google reCAPTCHA -->
+                <div class="g-recaptcha" data-sitekey="6LePYBAtAAAAAAkiW75YpqNpOhM8PGQuX7fEEFTs" data-theme="dark"></div>
+            </div>
+
+            <!-- BOTÓN ACCIÓN -->
+            <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black py-3.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-emerald-950/20 text-sm mt-2">
+                <i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar a la Porra
+            </button>
         </form>
+
     </div>
 
+    <!-- SCRIPT DE FIREBASE Y LÓGICA -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Configuración de tu proyecto Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAL1kyOtdo7M9sJSuZHi2dM_CxUEARSlDI",
             authDomain: "mundial-eeb29.firebaseapp.com",
@@ -61,75 +85,95 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Control de redirección automático si ya hay sesión iniciada
+        let currentMode = 'login'; // Puede ser 'login' o 'register'
+
+        // Redirigir automáticamente si el usuario ya está logueado
         onAuthStateChanged(auth, (user) => {
-            // Solo redirigimos automáticamente si el formulario NO está en modo registro,
-            // para evitar que se mueva de página antes de crear el documento de Firestore.
-            const isLoginMode = document.getElementById('field-nickname').classList.contains('hidden');
-            if (user && isLoginMode) { 
-                window.location.href = "app.html"; 
+            if (user) {
+                window.location.href = "app.html";
             }
         });
 
-        window.toggleAuthMode = function(isLogin) {
-            const nickField = document.getElementById('field-nickname');
-            const submitBtn = document.getElementById('auth-submit-btn');
-            const btnLogin = document.getElementById('toggle-login');
-            const btnRegister = document.getElementById('toggle-register');
+        // Cambiar entre pestañas de Iniciar Sesión y Registrarse
+        window.switchAuthTab = function(mode) {
+            currentMode = mode;
+            const loginBtn = document.getElementById('tab-login-btn');
+            const registerBtn = document.getElementById('tab-register-btn');
+            const submitBtn = document.getElementById('submit-btn');
 
-            if(isLogin) {
-                nickField.classList.add('hidden');
-                submitBtn.innerText = "Entrar";
-                btnLogin.className = "text-xl font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-2";
-                btnRegister.className = "text-xl font-bold text-slate-400 pb-2 px-2";
+            if (mode === 'login') {
+                loginBtn.className = "flex-1 py-2 rounded-lg font-bold text-sm bg-emerald-500 text-slate-950 transition";
+                registerBtn.className = "flex-1 py-2 rounded-lg font-bold text-sm text-slate-400 transition";
+                submitBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar a la Porra`;
             } else {
-                nickField.classList.remove('hidden');
-                submitBtn.innerText = "Crear Cuenta";
-                btnRegister.className = "text-xl font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-2";
-                btnLogin.className = "text-xl font-bold text-slate-400 pb-2 px-2";
+                registerBtn.className = "flex-1 py-2 rounded-lg font-bold text-sm bg-emerald-500 text-slate-950 transition";
+                loginBtn.className = "flex-1 py-2 rounded-lg font-bold text-sm text-slate-400 transition";
+                submitBtn.innerHTML = `<i class="fa-solid fa-user-plus mr-1"></i> Crear Cuenta Nueva`;
             }
         };
 
-        window.handleAuth = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
+        // Manejar el envío del formulario (Login o Registro)
+        window.handleAuth = async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value;
-            const nickname = document.getElementById('auth-nickname').value;
-            const isLogin = document.getElementById('field-nickname').classList.contains('hidden');
 
-            const submitBtn = document.getElementById('auth-submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = isLogin ? "Cargando..." : "Creando cuenta...";
+            // --- VALIDACIÓN OBLIGATORIA DEL RECAPTCHA EN AMBOS CASOS ---
+            const recaptchaResponse = grecaptcha.getResponse();
 
-            try {
-                if(isLogin) {
+            if (recaptchaResponse.length === 0) {
+                alert("Por favor, demuestra que no eres un robot marcando la casilla de reCAPTCHA.");
+                return;
+            }
+
+            if (currentMode === 'login') {
+                // --- PROCESO DE INICIO DE SESIÓN ---
+                try {
                     await signInWithEmailAndPassword(auth, email, password);
                     window.location.href = "app.html";
-                } else {
-                    // 1. Crear usuario en Firebase Authentication
-                    const res = await createUserWithEmailAndPassword(auth, email, password);
-                    
-                    // Definir datos del perfil a guardar
-                    const userProfile = {
-                        nickname: nickname.trim() !== "" ? nickname : email.split('@')[0],
+                } catch (error) {
+                    alert("Error al entrar: " + getReadableError(error.code));
+                    grecaptcha.reset(); // Reiniciar el captcha tras un error para mayor seguridad
+                }
+            } else {
+                // --- PROCESO DE REGISTRO ---
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // Crear el perfil del usuario en Firestore si no existe
+                    const uDocRef = doc(db, "users", user.uid);
+                    await setDoc(uDocRef, {
+                        nickname: email.split('@')[0],
                         email: email,
                         points: 0,
                         isDisqualified: false
-                    };
+                    });
 
-                    // 2. Obligar al sistema a esperar que termine la escritura en Firestore
-                    await setDoc(doc(db, "users", res.user.uid), userProfile);
-                    
-                    // 3. Hecho esto, mandamos al panel
                     window.location.href = "app.html";
+                } catch (error) {
+                    alert("Error al registrarse: " + getReadableError(error.code));
+                    grecaptcha.reset(); // Reiniciar el captcha tras un error
                 }
-            } catch (err) { 
-                console.error("Error en proceso:", err);
-                alert("Error de autenticación: " + err.message); 
-                submitBtn.disabled = false;
-                submitBtn.innerText = isLogin ? "Entrar" : "Crear Cuenta";
             }
         };
+
+        // Traducir los errores típicos de Firebase a español amigable
+        function getReadableError(code) {
+            switch (code) {
+                case 'auth/invalid-credential':
+                    return "El correo o la contraseña son incorrectos.";
+                case 'auth/email-already-in-use':
+                    return "Este correo electrónico ya está registrado.";
+                case 'auth/weak-password':
+                    return "La contraseña debe tener al menos 6 caracteres.";
+                case 'auth/invalid-email':
+                    return "El formato del correo electrónico no es válido.";
+                default:
+                    return code;
+            }
+        }
     </script>
 </body>
 </html>
