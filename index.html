@@ -6,8 +6,6 @@
     <title>Porra Mundial 2026 - Acceso</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Script Oficial de Google reCAPTCHA -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="bg-slate-900 text-white font-sans min-h-screen flex flex-col justify-center items-center p-4">
 
@@ -51,14 +49,8 @@
                 </div>
             </div>
 
-            <!-- CONTENEDOR DE RECAPTCHA (Siempre visible para ambos modos) -->
-            <div id="recaptcha-container" class="flex justify-center py-2">
-                <!-- Integración de tu clave pública de Google reCAPTCHA -->
-                <div class="g-recaptcha" data-sitekey="6LePYBAtAAAAAAkiW75YpqNpOhM8PGQuX7fEEFTs" data-theme="dark"></div>
-            </div>
-
             <!-- BOTÓN ACCIÓN -->
-            <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black py-3.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-emerald-950/20 text-sm mt-2">
+            <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black py-3.5 rounded-xl hover:opacity-90 transition shadow-lg shadow-emerald-950/20 text-sm mt-4">
                 <i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar a la Porra
             </button>
         </form>
@@ -119,14 +111,6 @@
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value;
 
-            // --- VALIDACIÓN OBLIGATORIA DEL RECAPTCHA EN AMBOS CASOS ---
-            const recaptchaResponse = grecaptcha.getResponse();
-
-            if (recaptchaResponse.length === 0) {
-                alert("Por favor, demuestra que no eres un robot marcando la casilla de reCAPTCHA.");
-                return;
-            }
-
             if (currentMode === 'login') {
                 // --- PROCESO DE INICIO DE SESIÓN ---
                 try {
@@ -134,7 +118,6 @@
                     window.location.href = "app.html";
                 } catch (error) {
                     alert("Error al entrar: " + getReadableError(error.code));
-                    grecaptcha.reset(); // Reiniciar el captcha tras un error para mayor seguridad
                 }
             } else {
                 // --- PROCESO DE REGISTRO ---
@@ -154,7 +137,6 @@
                     window.location.href = "app.html";
                 } catch (error) {
                     alert("Error al registrarse: " + getReadableError(error.code));
-                    grecaptcha.reset(); // Reiniciar el captcha tras un error
                 }
             }
         };
